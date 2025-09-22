@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Container, Row, Col, Tabs, Tab, Form } from 'react-bootstrap';
-import QRCode from 'qrcode.react';
+import { QRCodeCanvas as QRCode } from 'qrcode.react';
 
 function App() {
   const [url, setUrl] = useState('');
