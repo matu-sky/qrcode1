@@ -24,17 +24,17 @@ function App() {
     amount: '',
   });
 
-  const handleVCardChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleVCardChange = (e: any) => {
     const { name, value } = e.target;
     setVCard({ ...vCard, [name]: value });
   };
 
-  const handleWifiChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleWifiChange = (e: any) => {
     const { name, value } = e.target;
     setWifi({ ...wifi, [name]: value });
   };
 
-  const handlePaymentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePaymentChange = (e: any) => {
     const { name, value } = e.target;
     setPayment({ ...payment, [name]: value });
   };
@@ -43,14 +43,7 @@ function App() {
     if (Object.values(vCard).every(field => field === '')) {
       return '';
     }
-    return `BEGIN:VCARD
-VERSION:3.0
-FN:${vCard.name}
-ORG:${vCard.org}
-TITLE:${vCard.title}
-TEL;TYPE=WORK,VOICE:${vCard.phone}
-EMAIL:${vCard.email}
-END:VCARD`;
+    return `BEGIN:VCARD\nVERSION:3.0\nFN:${vCard.name}\nORG:${vCard.org}\nTITLE:${vCard.title}\nTEL;TYPE=WORK,VOICE:${vCard.phone}\nEMAIL:${vCard.email}\nEND:VCARD`;
   };
 
   const formatWifi = () => {
