@@ -50,7 +50,17 @@ export default function HomePage() {
   // Form states
   const [url, setUrl] = useState('');
   const [text, setText] = useState('');
-  const [vCard, setVCard] = useState({ name: '', phone: '', email: '', org: '', title: '' });
+  const [vCard, setVCard] = useState({ 
+    name: '', 
+    title: '', 
+    org: '', 
+    phone: '', // Mobile
+    workPhone: '', // Work
+    fax: '', 
+    email: '', 
+    website: '',
+    address: '' 
+  });
   const [wifi, setWifi] = useState({ ssid: '', password: '', encryption: 'WPA' });
   const [payment, setPayment] = useState({ bank: '', accountNumber: '', accountHolder: '', amount: '' });
   const [sms, setSms] = useState({ phone: '', message: '' });
@@ -61,6 +71,11 @@ export default function HomePage() {
   const [memoColor, setMemoColor] = useState('#000000');
   const [memoSize, setMemoSize] = useState('1.25rem');
   const [displayMemo, setDisplayMemo] = useState({ text: '', color: '', size: '' });
+
+  const handleVCardChange = (e: any) => {
+    const { name, value } = e.target;
+    setVCard({ ...vCard, [name]: value });
+  };
 
   const handleTabSelect = (k: string | null) => {
     setActiveTab(k || 'url');
@@ -104,7 +119,13 @@ export default function HomePage() {
       }
       case 'vcard': {
         if (Object.values(vCard).every(field => field === '')) return;
-        const params = new URLSearchParams({ type: 'vcard', ...vCard });
+        const params = new URLSearchParams({ type: 'vcard'});
+        // Manually append non-empty fields to avoid sending empty params
+        Object.entries(vCard).forEach(([key, value]) => {
+          if (value) {
+            params.set(key, value);
+          }
+        });
         setFinalQrValue(`${displayUrl}?${params.toString()}`);
         break;
       }
@@ -166,11 +187,15 @@ export default function HomePage() {
             </Tab>
             <Tab eventKey="vcard" title="명함">
               <Form onSubmit={handleGenerate} className="p-2">
-                <Form.Group className="mb-2"><Form.Label>이름</Form.Label><Form.Control type="text" name="name" placeholder="홍길동" value={vCard.name} onChange={(e) => setVCard({...vCard, name: e.target.value})} /></Form.Group>
-                <Form.Group className="mb-2"><Form.Label>연락처</Form.Label><Form.Control type="tel" name="phone" placeholder="010-1234-5678" value={vCard.phone} onChange={(e) => setVCard({...vCard, phone: e.target.value})} /></Form.Group>
-                <Form.Group className="mb-2"><Form.Label>이메일</Form.Label><Form.Control type="email" name="email" placeholder="hong@example.com" value={vCard.email} onChange={(e) => setVCard({...vCard, email: e.target.value})} /></Form.Group>
-                <Form.Group className="mb-2"><Form.Label>회사</Form.Label><Form.Control type="text" name="org" placeholder="주식회사 홍길동" value={vCard.org} onChange={(e) => setVCard({...vCard, org: e.target.value})} /></Form.Group>
-                <Form.Group className="mb-2"><Form.Label>직책</Form.Label><Form.Control type="text" name="title" placeholder="대표" value={vCard.title} onChange={(e) => setVCard({...vCard, title: e.target.value})} /></Form.Group>
+                <Form.Group className="mb-2"><Form.Label>이름</Form.Label><Form.Control type="text" name="name" placeholder="홍길동" value={vCard.name} onChange={handleVCardChange} /></Form.Group>
+                <Form.Group className="mb-2"><Form.Label>회사</Form.Label><Form.Control type="text" name="org" placeholder="주식회사 홍길동" value={vCard.org} onChange={handleVCardChange} /></Form.Group>
+                <Form.Group className="mb-2"><Form.Label>직책</Form.Label><Form.Control type="text" name="title" placeholder="대표" value={vCard.title} onChange={handleVCardChange} /></Form.Group>
+                <Form.Group className="mb-2"><Form.Label>핸드폰</Form.Label><Form.Control type="tel" name="phone" placeholder="010-1234-5678" value={vCard.phone} onChange={handleVCardChange} /></Form.Group>
+                <Form.Group className="mb-2"><Form.Label>일반전화</Form.Label><Form.Control type="tel" name="workPhone" placeholder="02-123-4567" value={vCard.workPhone} onChange={handleVCardChange} /></Form.Group>
+                <Form.Group className="mb-2"><Form.Label>팩스</Form.Label><Form.Control type="tel" name="fax" placeholder="02-123-4568" value={vCard.fax} onChange={handleVCardChange} /></Form.Group>
+                <Form.Group className="mb-2"><Form.Label>이메일</Form.Label><Form.Control type="email" name="email" placeholder="hong@example.com" value={vCard.email} onChange={handleVCardChange} /></Form.Group>
+                <Form.Group className="mb-2"><Form.Label>홈페이지</Form.Label><Form.Control type="text" name="website" placeholder="https://example.com" value={vCard.website} onChange={handleVCardChange} /></Form.Group>
+                <Form.Group className="mb-2"><Form.Label>주소</Form.Label><Form.Control type="text" name="address" placeholder="서울시 강남구 테헤란로" value={vCard.address} onChange={handleVCardChange} /></Form.Group>
                 <MemoCustomizer memo={memo} setMemo={setMemo} color={memoColor} setColor={setMemoColor} size={memoSize} setSize={setMemoSize} />
                 <Button variant="primary" type="submit" className="mt-4 w-100">QR 코드 생성</Button>
               </Form>

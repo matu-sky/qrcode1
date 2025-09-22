@@ -10,29 +10,52 @@ export default function DisplayPage() {
   const template = searchParams.get('template') || 'memo';
   const type = searchParams.get('type') || 'text';
 
-  // Get data from URL
+  // Common data
   const text = searchParams.get('text');
+
+  // Payment data
   const bank = searchParams.get('bank');
   const accountNumber = searchParams.get('accountNumber');
   const accountHolder = searchParams.get('accountHolder');
   const amount = searchParams.get('amount');
+
+  // vCard data
   const vCardData = {
     name: searchParams.get('name'),
     title: searchParams.get('title'),
     org: searchParams.get('org'),
     phone: searchParams.get('phone'),
+    workPhone: searchParams.get('workPhone'),
+    fax: searchParams.get('fax'),
     email: searchParams.get('email'),
+    website: searchParams.get('website'),
+    address: searchParams.get('address'),
   };
 
   const handleSaveVCard = () => {
-    const vCardString = `BEGIN:VCARD
+    let vCardString = `BEGIN:VCARD
 VERSION:3.0
-FN:${vCardData.name}
-ORG:${vCardData.org}
-TITLE:${vCardData.title}
-TEL;TYPE=WORK,VOICE:${vCardData.phone}
-EMAIL:${vCardData.email}
-END:VCARD`;
+`;
+    if(vCardData.name) vCardString += `FN:${vCardData.name}
+`;
+    if(vCardData.org) vCardString += `ORG:${vCardData.org}
+`;
+    if(vCardData.title) vCardString += `TITLE:${vCardData.title}
+`;
+    if(vCardData.phone) vCardString += `TEL;TYPE=CELL:${vCardData.phone}
+`;
+    if(vCardData.workPhone) vCardString += `TEL;TYPE=WORK,VOICE:${vCardData.workPhone}
+`;
+    if(vCardData.fax) vCardString += `TEL;TYPE=FAX:${vCardData.fax}
+`;
+    if(vCardData.email) vCardString += `EMAIL:${vCardData.email}
+`;
+    if(vCardData.website) vCardString += `URL:${vCardData.website}
+`;
+    if(vCardData.address) vCardString += `ADR;TYPE=WORK:;;${vCardData.address}
+`;
+    vCardString += `END:VCARD`;
+
     const blob = new Blob([vCardString], { type: 'text/vcard;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -48,17 +71,17 @@ END:VCARD`;
     if (type === 'vcard') {
       return (
         <>
-          <div className="name">{vCardData.name}</div>
-          <div className="title">{vCardData.title}</div>
-          <div className="org">{vCardData.org}</div>
-          <div className="contact-item">
-            <span className="icon">📞</span>
-            <span>{vCardData.phone}</span>
-          </div>
-          <div className="contact-item">
-            <span className="icon">✉️</span>
-            <span>{vCardData.email}</span>
-          </div>
+          {vCardData.name && <div className="name">{vCardData.name}</div>}
+          {vCardData.title && <div className="title">{vCardData.title}</div>}
+          {vCardData.org && <div className="org">{vCardData.org}</div>}
+          
+          {vCardData.phone && <div className="contact-item"><span className="icon">📱</span> <span>{vCardData.phone}</span></div>}
+          {vCardData.workPhone && <div className="contact-item"><span className="icon">📞</span> <span>{vCardData.workPhone}</span></div>}
+          {vCardData.fax && <div className="contact-item"><span className="icon">📠</span> <span>{vCardData.fax}</span></div>}
+          {vCardData.email && <div className="contact-item"><span className="icon">✉️</span> <span>{vCardData.email}</span></div>}
+          {vCardData.website && <div className="contact-item"><span className="icon">🌐</span> <span><a href={vCardData.website} target="_blank" rel="noopener noreferrer">{vCardData.website}</a></span></div>}
+          {vCardData.address && <div className="contact-item"><span className="icon">📍</span> <span>{vCardData.address}</span></div>}
+
           <Button variant="primary" onClick={handleSaveVCard} className="w-100 mt-4">연락처 저장</Button>
         </>
       );
