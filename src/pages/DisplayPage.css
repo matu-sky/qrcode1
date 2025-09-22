@@ -69,10 +69,25 @@
     letter-spacing: 1px;
 }
 
+/* Styles for Payment Info Items */
+.memo .item, .sticky-note .item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #eee;
+}
+
+.memo .item .label, .sticky-note .item .label {
+    font-weight: 500;
+    margin-right: 15px;
+}
+
 .receipt .item {
     display: flex;
     justify-content: space-between;
-    font-size: 1.5rem;
+    font-size: 1.6rem; /* Increased size */
     margin-bottom: 12px;
     border-bottom: 1px dotted #eee;
     padding-bottom: 7px;
