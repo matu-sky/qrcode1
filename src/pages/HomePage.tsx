@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Container, Row, Col, Tabs, Tab, Form, Button } from 'react-bootstrap';
 import { QRCodeCanvas as QRCode } from 'qrcode.react';
 
@@ -17,6 +17,7 @@ const TemplateSelector = ({ selected, onChange }: { selected: string, onChange: 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState('url');
   const [finalQrValue, setFinalQrValue] = useState('');
+  const qrRef = useRef<any>(null);
 
   // Form states
   const [url, setUrl] = useState('');
@@ -29,6 +30,21 @@ export default function HomePage() {
   const handleTabSelect = (k: string | null) => {
     setActiveTab(k || 'url');
     setFinalQrValue(''); // Clear QR code when switching tabs
+  };
+
+  const handleDownload = () => {
+    if (qrRef.current) {
+      const canvas = qrRef.current.querySelector('canvas');
+      if (canvas) {
+        const image = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.href = image;
+        link.download = 'qr-code.png';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    }
   };
 
   const handleGenerate = (e: React.FormEvent<HTMLFormElement>) => {
@@ -131,9 +147,16 @@ export default function HomePage() {
         </Col>
         <Col md={5} className="text-center">
           <div className="qr-code-container d-flex justify-content-center align-items-center">
-            <div>
+            <div ref={qrRef}>
               <h4 className="mb-4">생성된 QR 코드</h4>
-              {finalQrValue ? <QRCode value={finalQrValue} size={256} /> : <p className="qr-code-placeholder">내용 입력 후 'QR 코드 생성' 버튼을 눌러주세요.</p>}
+              {finalQrValue ? 
+                <>
+                  <QRCode value={finalQrValue} size={256} />
+                  <Button variant="secondary" onClick={handleDownload} className="mt-3">다운로드</Button>
+                </> 
+                : 
+                <p className="qr-code-placeholder">내용 입력 후 'QR 코드 생성' 버튼을 눌러주세요.</p>
+              }
             </div>
           </div>
         </Col>
