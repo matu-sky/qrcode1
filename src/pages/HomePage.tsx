@@ -25,6 +25,7 @@ export default function HomePage() {
   const [vCard, setVCard] = useState({ name: '', phone: '', email: '', org: '', title: '' });
   const [wifi, setWifi] = useState({ ssid: '', password: '', encryption: 'WPA' });
   const [payment, setPayment] = useState({ bank: '', accountNumber: '', accountHolder: '', amount: '' });
+  const [sms, setSms] = useState({ phone: '', message: '' });
   const [template, setTemplate] = useState('memo');
 
   const handleTabSelect = (k: string | null) => {
@@ -83,6 +84,11 @@ export default function HomePage() {
         setFinalQrValue(`${displayUrl}?${params.toString()}`);
         break;
       }
+      case 'sms': {
+        if (!sms.phone) return;
+        setFinalQrValue(`SMSTO:${sms.phone}:${sms.message}`);
+        break;
+      }
       default:
         setFinalQrValue('');
     }
@@ -112,6 +118,13 @@ export default function HomePage() {
                   <Form.Control as="textarea" rows={4} placeholder="QR 코드로 만들 텍스트를 입력하세요." value={text} onChange={(e) => setText(e.target.value)} />
                 </Form.Group>
                 <TemplateSelector selected={template} onChange={setTemplate} />
+                <Button variant="primary" type="submit" className="mt-3 w-100">QR 코드 생성</Button>
+              </Form>
+            </Tab>
+            <Tab eventKey="sms" title="SMS">
+              <Form onSubmit={handleGenerate} className="p-2">
+                <Form.Group className="mb-2"><Form.Label>전화번호</Form.Label><Form.Control type="tel" placeholder="010-1234-5678" value={sms.phone} onChange={(e) => setSms({...sms, phone: e.target.value})} /></Form.Group>
+                <Form.Group className="mb-2"><Form.Label>메시지 내용</Form.Label><Form.Control as="textarea" rows={4} placeholder="보낼 메시지를 입력하세요." value={sms.message} onChange={(e) => setSms({...sms, message: e.target.value})} /></Form.Group>
                 <Button variant="primary" type="submit" className="mt-3 w-100">QR 코드 생성</Button>
               </Form>
             </Tab>
