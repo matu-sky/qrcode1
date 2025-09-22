@@ -73,66 +73,68 @@ export default function HomePage() {
   };
 
   return (
-    <Container className="mt-5">
+    <Container className="main-container">
       <Row>
-        <Col><h1 className="text-center mb-4">QR 코드 생성기</h1></Col>
+        <Col><h1 className="text-center main-header">QR 코드 생성기</h1></Col>
       </Row>
       <Row>
         <Col md={7}>
-          <Tabs activeKey={activeTab} onSelect={handleTabSelect} id="qr-code-tabs" className="mb-3">
+          <Tabs activeKey={activeTab} onSelect={handleTabSelect} id="qr-code-tabs" className="mb-4 custom-tabs">
             <Tab eventKey="url" title="URL">
-              <Form onSubmit={handleGenerate}>
+              <Form onSubmit={handleGenerate} className="p-2">
                 <Form.Group controlId="formUrl">
                   <Form.Label>웹사이트 URL</Form.Label>
                   <Form.Control type="text" placeholder="https://example.com" value={url} onChange={(e) => setUrl(e.target.value)} />
                 </Form.Group>
-                <Button variant="primary" type="submit" className="mt-3">QR 코드 생성</Button>
+                <Button variant="primary" type="submit" className="mt-4 w-100">QR 코드 생성</Button>
               </Form>
             </Tab>
             <Tab eventKey="text" title="텍스트">
-              <Form onSubmit={handleGenerate}>
+              <Form onSubmit={handleGenerate} className="p-2">
                 <Form.Group controlId="formText">
                   <Form.Label>내용</Form.Label>
                   <Form.Control as="textarea" rows={4} placeholder="QR 코드로 만들 텍스트를 입력하세요." value={text} onChange={(e) => setText(e.target.value)} />
                 </Form.Group>
                 <TemplateSelector selected={template} onChange={setTemplate} />
-                <Button variant="primary" type="submit" className="mt-3">QR 코드 생성</Button>
+                <Button variant="primary" type="submit" className="mt-3 w-100">QR 코드 생성</Button>
               </Form>
             </Tab>
             <Tab eventKey="vcard" title="명함">
-              <Form onSubmit={handleGenerate}>
+              <Form onSubmit={handleGenerate} className="p-2">
                 <Form.Group className="mb-2"><Form.Label>이름</Form.Label><Form.Control type="text" name="name" placeholder="홍길동" value={vCard.name} onChange={(e) => setVCard({...vCard, name: e.target.value})} /></Form.Group>
                 <Form.Group className="mb-2"><Form.Label>연락처</Form.Label><Form.Control type="tel" name="phone" placeholder="010-1234-5678" value={vCard.phone} onChange={(e) => setVCard({...vCard, phone: e.target.value})} /></Form.Group>
                 <Form.Group className="mb-2"><Form.Label>이메일</Form.Label><Form.Control type="email" name="email" placeholder="hong@example.com" value={vCard.email} onChange={(e) => setVCard({...vCard, email: e.target.value})} /></Form.Group>
                 <Form.Group className="mb-2"><Form.Label>회사</Form.Label><Form.Control type="text" name="org" placeholder="주식회사 홍길동" value={vCard.org} onChange={(e) => setVCard({...vCard, org: e.target.value})} /></Form.Group>
                 <Form.Group className="mb-2"><Form.Label>직책</Form.Label><Form.Control type="text" name="title" placeholder="대표" value={vCard.title} onChange={(e) => setVCard({...vCard, title: e.target.value})} /></Form.Group>
-                <Button variant="primary" type="submit" className="mt-3">QR 코드 생성</Button>
+                <Button variant="primary" type="submit" className="mt-3 w-100">QR 코드 생성</Button>
               </Form>
             </Tab>
             <Tab eventKey="wifi" title="Wi-Fi">
-              <Form onSubmit={handleGenerate}>
+              <Form onSubmit={handleGenerate} className="p-2">
                 <Form.Group className="mb-2"><Form.Label>네트워크 이름 (SSID)</Form.Label><Form.Control type="text" name="ssid" placeholder="MyWiFi" value={wifi.ssid} onChange={(e) => setWifi({...wifi, ssid: e.target.value})} /></Form.Group>
                 <Form.Group className="mb-2"><Form.Label>비밀번호</Form.Label><Form.Control type="password" name="password" placeholder="비밀번호" value={wifi.password} onChange={(e) => setWifi({...wifi, password: e.target.value})} /></Form.Group>
                 <Form.Group className="mb-2"><Form.Label>암호화 방식</Form.Label><Form.Select name="encryption" value={wifi.encryption} onChange={(e) => setWifi({...wifi, encryption: e.target.value})}><option value="WPA">WPA/WPA2</option><option value="WEP">WEP</option><option value="nopass">없음</option></Form.Select></Form.Group>
-                <Button variant="primary" type="submit" className="mt-3">QR 코드 생성</Button>
+                <Button variant="primary" type="submit" className="mt-3 w-100">QR 코드 생성</Button>
               </Form>
             </Tab>
             <Tab eventKey="payment" title="계좌이체">
-              <Form onSubmit={handleGenerate}>
+              <Form onSubmit={handleGenerate} className="p-2">
                 <Form.Group className="mb-2"><Form.Label>은행</Form.Label><Form.Control type="text" name="bank" placeholder="예: 신한은행" value={payment.bank} onChange={(e) => setPayment({...payment, bank: e.target.value})} /></Form.Group>
                 <Form.Group className="mb-2"><Form.Label>계좌번호</Form.Label><Form.Control type="text" name="accountNumber" placeholder="110-XXX-XXXXXX" value={payment.accountNumber} onChange={(e) => setPayment({...payment, accountNumber: e.target.value})} /></Form.Group>
                 <Form.Group className="mb-2"><Form.Label>예금주</Form.Label><Form.Control type="text" name="accountHolder" placeholder="홍길동" value={payment.accountHolder} onChange={(e) => setPayment({...payment, accountHolder: e.target.value})} /></Form.Group>
                 <Form.Group className="mb-2"><Form.Label>금액 (선택 사항)</Form.Label><Form.Control type="number" name="amount" placeholder="10000" value={payment.amount} onChange={(e) => setPayment({...payment, amount: e.target.value})} /></Form.Group>
                 <TemplateSelector selected={template} onChange={setTemplate} />
-                <Button variant="primary" type="submit" className="mt-3">QR 코드 생성</Button>
+                <Button variant="primary" type="submit" className="mt-3 w-100">QR 코드 생성</Button>
               </Form>
             </Tab>
           </Tabs>
         </Col>
         <Col md={5} className="text-center">
-          <h4>생성된 QR 코드</h4>
-          <div className="p-3 border rounded d-flex justify-content-center align-items-center" style={{ minHeight: '288px' }}>
-            {finalQrValue ? <QRCode value={finalQrValue} size={256} /> : <p className="text-muted">내용 입력 후 'QR 코드 생성' 버튼을 눌러주세요.</p>}
+          <div className="qr-code-container d-flex justify-content-center align-items-center">
+            <div>
+              <h4 className="mb-4">생성된 QR 코드</h4>
+              {finalQrValue ? <QRCode value={finalQrValue} size={256} /> : <p className="qr-code-placeholder">내용 입력 후 'QR 코드 생성' 버튼을 눌러주세요.</p>}
+            </div>
           </div>
         </Col>
       </Row>
