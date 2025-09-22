@@ -6,6 +6,33 @@ function App() {
   const [activeTab, setActiveTab] = useState('url');
   const [url, setUrl] = useState('');
   const [text, setText] = useState('');
+  const [vCard, setVCard] = useState({
+    name: '',
+    phone: '',
+    email: '',
+    org: '',
+    title: '',
+  });
+
+  const handleVCardChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setVCard({ ...vCard, [name]: value });
+  };
+
+  const formatVCard = () => {
+    // Only generate QR code if at least one field is filled
+    if (Object.values(vCard).every(field => field === '')) {
+      return '';
+    }
+    return `BEGIN:VCARD
+VERSION:3.0
+FN:${vCard.name}
+ORG:${vCard.org}
+TITLE:${vCard.title}
+TEL;TYPE=WORK,VOICE:${vCard.phone}
+EMAIL:${vCard.email}
+END:VCARD`;
+  };
 
   const getQrValue = () => {
     switch (activeTab) {
@@ -13,6 +40,8 @@ function App() {
         return url;
       case 'text':
         return text;
+      case 'vcard':
+        return formatVCard();
       default:
         return '';
     }
@@ -63,7 +92,28 @@ function App() {
               </Form>
             </Tab>
             <Tab eventKey="vcard" title="명함">
-              {/* 명함 입력 폼 (추후 구현) */}
+              <Form>
+                <Form.Group controlId="formVCardName" className="mb-2">
+                  <Form.Label>이름</Form.Label>
+                  <Form.Control type="text" name="name" placeholder="홍길동" value={vCard.name} onChange={handleVCardChange} />
+                </Form.Group>
+                <Form.Group controlId="formVCardPhone" className="mb-2">
+                  <Form.Label>연락처</Form.Label>
+                  <Form.Control type="tel" name="phone" placeholder="010-1234-5678" value={vCard.phone} onChange={handleVCardChange} />
+                </Form.Group>
+                <Form.Group controlId="formVCardEmail" className="mb-2">
+                  <Form.Label>이메일</Form.Label>
+                  <Form.Control type="email" name="email" placeholder="hong@example.com" value={vCard.email} onChange={handleVCardChange} />
+                </Form.Group>
+                <Form.Group controlId="formVCardOrg" className="mb-2">
+                  <Form.Label>회사</Form.Label>
+                  <Form.Control type="text" name="org" placeholder="주식회사 홍길동" value={vCard.org} onChange={handleVCardChange} />
+                </Form.Group>
+                <Form.Group controlId="formVCardTitle" className="mb-2">
+                  <Form.Label>직책</Form.Label>
+                  <Form.Control type="text" name="title" placeholder="대표" value={vCard.title} onChange={handleVCardChange} />
+                </Form.Group>
+              </Form>
             </Tab>
             <Tab eventKey="wifi" title="Wi-Fi">
               {/* Wi-Fi 입력 폼 (추후 구현) */}
