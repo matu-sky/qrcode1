@@ -96,3 +96,51 @@
 .receipt .item .label {
     font-weight: bold;
 }
+
+/* Business Card Template */
+.business-card {
+    background: #fff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    width: 90%;
+    max-width: 550px;
+    font-family: 'Noto Sans KR', sans-serif;
+    border-top: 8px solid #007bff;
+}
+
+.business-card .name {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.business-card .title {
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: #007bff;
+    margin-bottom: 2rem;
+}
+
+.business-card .org {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #34495e;
+    margin-bottom: 2.5rem;
+}
+
+.business-card .contact-item {
+    display: flex;
+    align-items: center;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    color: #34495e;
+}
+
+.business-card .contact-item .icon {
+    margin-right: 15px;
+    width: 24px;
+    text-align: center;
+    color: #007bff;
+}
