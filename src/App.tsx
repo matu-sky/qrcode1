@@ -21,6 +21,7 @@ function App() {
   const [payment, setPayment] = useState({
     bank: '',
     accountNumber: '',
+    accountHolder: '', // Added field
     amount: '',
   });
 
@@ -60,6 +61,9 @@ function App() {
       return '';
     }
     let paymentInfo = `은행: ${payment.bank}\n계좌번호: ${payment.accountNumber}`;
+    if (payment.accountHolder) { // Added line
+      paymentInfo += `\n예금주: ${payment.accountHolder}`; // Added line
+    }
     if (payment.amount) {
       paymentInfo += `\n금액: ${payment.amount}원`;
     }
@@ -180,6 +184,10 @@ function App() {
                 <Form.Group controlId="formPaymentAccount" className="mb-2">
                   <Form.Label>계좌번호</Form.Label>
                   <Form.Control type="text" name="accountNumber" placeholder="110-XXX-XXXXXX" value={payment.accountNumber} onChange={handlePaymentChange} />
+                </Form.Group>
+                <Form.Group controlId="formPaymentAccountHolder" className="mb-2">
+                  <Form.Label>예금주</Form.Label>
+                  <Form.Control type="text" name="accountHolder" placeholder="홍길동" value={payment.accountHolder} onChange={handlePaymentChange} />
                 </Form.Group>
                 <Form.Group controlId="formPaymentAmount" className="mb-2">
                   <Form.Label>금액 (선택 사항)</Form.Label>
