@@ -1,0 +1,83 @@
+.template-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f0f2f5;
+}
+
+.memo {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    width: 90%;
+    max-width: 500px;
+    font-family: 'KyoboHand', sans-serif; /* A nice handwriting font would be cool, but needs to be imported */
+}
+
+.memo h2 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+}
+
+.memo p {
+    font-size: 1.5rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+
+/* Sticky Note Template */
+.sticky-note {
+    background: #ffc;
+    padding: 30px;
+    width: 90%;
+    max-width: 500px;
+    font-family: 'Gaegu', cursive; /* Example of a Google Font */
+    box-shadow: 5px 5px 7px rgba(33,33,33,.7);
+    transform: rotate(2deg);
+    transition: transform .15s linear;
+}
+
+.sticky-note:hover {
+    transform: rotate(-1deg);
+}
+
+.sticky-note p {
+    font-size: 1.8rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+}
+
+
+/* Receipt Template */
+.receipt {
+    background: #fff;
+    padding: 30px;
+    border: 1px dashed #ccc;
+    width: 90%;
+    max-width: 400px;
+    font-family: 'Courier New', monospace;
+}
+
+.receipt h2 {
+    text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: 25px;
+    letter-spacing: 1px;
+}
+
+.receipt .item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    border-bottom: 1px dotted #eee;
+    padding-bottom: 5px;
+}
+
+.receipt .item .label {
+    font-weight: bold;
+}
