@@ -18,6 +18,11 @@ function App() {
     password: '',
     encryption: 'WPA',
   });
+  const [payment, setPayment] = useState({
+    bank: '',
+    accountNumber: '',
+    amount: '',
+  });
 
   const handleVCardChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -29,11 +34,23 @@ function App() {
     setWifi({ ...wifi, [name]: value });
   };
 
+  const handlePaymentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setPayment({ ...payment, [name]: value });
+  };
+
   const formatVCard = () => {
     if (Object.values(vCard).every(field => field === '')) {
       return '';
     }
-    return `BEGIN:VCARD\nVERSION:3.0\nFN:${vCard.name}\nORG:${vCard.org}\nTITLE:${vCard.title}\nTEL;TYPE=WORK,VOICE:${vCard.phone}\nEMAIL:${vCard.email}\nEND:VCARD`;
+    return `BEGIN:VCARD
+VERSION:3.0
+FN:${vCard.name}
+ORG:${vCard.org}
+TITLE:${vCard.title}
+TEL;TYPE=WORK,VOICE:${vCard.phone}
+EMAIL:${vCard.email}
+END:VCARD`;
   };
 
   const formatWifi = () => {
@@ -43,6 +60,17 @@ function App() {
     const escapedSsid = wifi.ssid.replace(/([\\;,"'])/g, '\\$1');
     const escapedPassword = wifi.password.replace(/([\\;,"'])/g, '\\$1');
     return `WIFI:T:${wifi.encryption};S:${escapedSsid};P:${escapedPassword};;`;
+  };
+
+  const formatPayment = () => {
+    if (!payment.bank && !payment.accountNumber) {
+      return '';
+    }
+    let paymentInfo = `은행: ${payment.bank}\n계좌번호: ${payment.accountNumber}`;
+    if (payment.amount) {
+      paymentInfo += `\n금액: ${payment.amount}원`;
+    }
+    return paymentInfo;
   };
 
   const getQrValue = () => {
@@ -55,6 +83,8 @@ function App() {
         return formatVCard();
       case 'wifi':
         return formatWifi();
+      case 'payment':
+        return formatPayment();
       default:
         return '';
     }
@@ -149,7 +179,20 @@ function App() {
               </Form>
             </Tab>
             <Tab eventKey="payment" title="계좌이체">
-              {/* 계좌이체 입력 폼 (추후 구현) */}
+              <Form>
+                <Form.Group controlId="formPaymentBank" className="mb-2">
+                  <Form.Label>은행</Form.Label>
+                  <Form.Control type="text" name="bank" placeholder="예: 신한은행" value={payment.bank} onChange={handlePaymentChange} />
+                </Form.Group>
+                <Form.Group controlId="formPaymentAccount" className="mb-2">
+                  <Form.Label>계좌번호</Form.Label>
+                  <Form.Control type="text" name="accountNumber" placeholder="110-XXX-XXXXXX" value={payment.accountNumber} onChange={handlePaymentChange} />
+                </Form.Group>
+                <Form.Group controlId="formPaymentAmount" className="mb-2">
+                  <Form.Label>금액 (선택 사항)</Form.Label>
+                  <Form.Control type="number" name="amount" placeholder="10000" value={payment.amount} onChange={handlePaymentChange} />
+                </Form.Group>
+              </Form>
             </Tab>
           </Tabs>
         </Col>
