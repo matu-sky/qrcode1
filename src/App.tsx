@@ -13,25 +13,36 @@ function App() {
     org: '',
     title: '',
   });
+  const [wifi, setWifi] = useState({
+    ssid: '',
+    password: '',
+    encryption: 'WPA',
+  });
 
   const handleVCardChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setVCard({ ...vCard, [name]: value });
   };
 
+  const handleWifiChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setWifi({ ...wifi, [name]: value });
+  };
+
   const formatVCard = () => {
-    // Only generate QR code if at least one field is filled
     if (Object.values(vCard).every(field => field === '')) {
       return '';
     }
-    return `BEGIN:VCARD
-VERSION:3.0
-FN:${vCard.name}
-ORG:${vCard.org}
-TITLE:${vCard.title}
-TEL;TYPE=WORK,VOICE:${vCard.phone}
-EMAIL:${vCard.email}
-END:VCARD`;
+    return `BEGIN:VCARD\nVERSION:3.0\nFN:${vCard.name}\nORG:${vCard.org}\nTITLE:${vCard.title}\nTEL;TYPE=WORK,VOICE:${vCard.phone}\nEMAIL:${vCard.email}\nEND:VCARD`;
+  };
+
+  const formatWifi = () => {
+    if (!wifi.ssid) {
+      return '';
+    }
+    const escapedSsid = wifi.ssid.replace(/([\\;,"'])/g, '\\$1');
+    const escapedPassword = wifi.password.replace(/([\\;,"'])/g, '\\$1');
+    return `WIFI:T:${wifi.encryption};S:${escapedSsid};P:${escapedPassword};;`;
   };
 
   const getQrValue = () => {
@@ -42,6 +53,8 @@ END:VCARD`;
         return text;
       case 'vcard':
         return formatVCard();
+      case 'wifi':
+        return formatWifi();
       default:
         return '';
     }
@@ -116,7 +129,24 @@ END:VCARD`;
               </Form>
             </Tab>
             <Tab eventKey="wifi" title="Wi-Fi">
-              {/* Wi-Fi 입력 폼 (추후 구현) */}
+              <Form>
+                <Form.Group controlId="formWifiSsid" className="mb-2">
+                  <Form.Label>네트워크 이름 (SSID)</Form.Label>
+                  <Form.Control type="text" name="ssid" placeholder="MyWiFi" value={wifi.ssid} onChange={handleWifiChange} />
+                </Form.Group>
+                <Form.Group controlId="formWifiPassword" className="mb-2">
+                  <Form.Label>비밀번호</Form.Label>
+                  <Form.Control type="password" name="password" placeholder="비밀번호" value={wifi.password} onChange={handleWifiChange} />
+                </Form.Group>
+                <Form.Group controlId="formWifiEncryption" className="mb-2">
+                  <Form.Label>암호화 방식</Form.Label>
+                  <Form.Select name="encryption" value={wifi.encryption} onChange={handleWifiChange}>
+                    <option value="WPA">WPA/WPA2</option>
+                    <option value="WEP">WEP</option>
+                    <option value="nopass">없음</option>
+                  </Form.Select>
+                </Form.Group>
+              </Form>
             </Tab>
             <Tab eventKey="payment" title="계좌이체">
               {/* 계좌이체 입력 폼 (추후 구현) */}
