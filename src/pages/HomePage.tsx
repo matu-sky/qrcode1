@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Container, Row, Col, Tabs, Tab, Form, Button } from 'react-bootstrap';
+import { Container, Row, Col, Tabs, Tab, Form, Button, Card, InputGroup } from 'react-bootstrap';
 import { QRCodeCanvas as QRCode } from 'qrcode.react';
 import { toPng } from 'html-to-image';
 
@@ -44,6 +44,115 @@ const TemplateSelector = ({ selected, onChange }: { selected: string, onChange: 
   </Form.Group>
 );
 
+const MenuForm = ({ menuData, setMenuData }: any) => {
+  
+  const handleShopInfoChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setMenuData({ ...menuData, [name]: value });
+  };
+
+  const handleCategoryChange = (catIndex: number, value: string) => {
+    const newCategories = [...menuData.categories];
+    newCategories[catIndex].name = value;
+    setMenuData({ ...menuData, categories: newCategories });
+  };
+
+  const handleItemChange = (catIndex: number, itemIndex: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    const newCategories = [...menuData.categories];
+    newCategories[catIndex].items[itemIndex] = { ...newCategories[catIndex].items[itemIndex], [name]: value };
+    setMenuData({ ...menuData, categories: newCategories });
+  };
+
+  const addCategory = () => {
+    setMenuData({
+      ...menuData,
+      categories: [...menuData.categories, { name: '', items: [{ name: '', price: '', description: '' }] }]
+    });
+  };
+
+  const removeCategory = (catIndex: number) => {
+    const newCategories = [...menuData.categories];
+    newCategories.splice(catIndex, 1);
+    setMenuData({ ...menuData, categories: newCategories });
+  };
+
+  const addItem = (catIndex: number) => {
+    const newCategories = [...menuData.categories];
+    newCategories[catIndex].items.push({ name: '', price: '', description: '' });
+    setMenuData({ ...menuData, categories: newCategories });
+  };
+
+  const removeItem = (catIndex: number, itemIndex: number) => {
+    const newCategories = [...menuData.categories];
+    newCategories[catIndex].items.splice(itemIndex, 1);
+    setMenuData({ ...menuData, categories: newCategories });
+  };
+
+  return (
+    <div className="p-2">
+      <Form.Group className="mb-3">
+        <Form.Label>가게 이름</Form.Label>
+        <Form.Control 
+          type="text" 
+          name="shopName"
+          placeholder="예: Gemini's Coffee" 
+          value={menuData.shopName} 
+          onChange={handleShopInfoChange} 
+        />
+      </Form.Group>
+      <Form.Group className="mb-4">
+        <Form.Label>가게 설명 (선택 사항)</Form.Label>
+        <Form.Control 
+          as="textarea"
+          rows={2}
+          name="shopDescription"
+          placeholder="손님들께 전하고 싶은 말을 적어보세요." 
+          value={menuData.shopDescription} 
+          onChange={handleShopInfoChange} 
+        />
+      </Form.Group>
+
+      {menuData.categories.map((category: any, catIndex: number) => (
+        <Card key={catIndex} className="mb-4">
+          <Card.Header>
+            <InputGroup>
+              <InputGroup.Text>카테고리</InputGroup.Text>
+              <Form.Control 
+                type="text" 
+                placeholder="예: 커피, 에이드" 
+                value={category.name} 
+                onChange={(e) => handleCategoryChange(catIndex, e.target.value)}
+              />
+              <Button variant="outline-danger" onClick={() => removeCategory(catIndex)}>X</Button>
+            </InputGroup>
+          </Card.Header>
+          <Card.Body>
+            {category.items.map((item: any, itemIndex: number) => (
+              <Row key={itemIndex} className="mb-3 align-items-center">
+                <Col md={4}>
+                  <Form.Control name="name" placeholder="메뉴 이름" value={item.name} onChange={(e) => handleItemChange(catIndex, itemIndex, e)} />
+                </Col>
+                <Col md={3}>
+                  <Form.Control name="price" placeholder="가격" value={item.price} onChange={(e) => handleItemChange(catIndex, itemIndex, e)} />
+                </Col>
+                <Col md={4}>
+                  <Form.Control name="description" placeholder="설명 (선택)" value={item.description} onChange={(e) => handleItemChange(catIndex, itemIndex, e)} />
+                </Col>
+                <Col md={1} className="text-end">
+                  <Button variant="outline-secondary" size="sm" onClick={() => removeItem(catIndex, itemIndex)}>–</Button>
+                </Col>
+              </Row>
+            ))}
+            <Button variant="secondary" onClick={() => addItem(catIndex)}>+ 메뉴 항목 추가</Button>
+          </Card.Body>
+        </Card>
+      ))}
+      <Button variant="primary" onClick={addCategory} className="w-100 mb-4">+ 카테고리 추가</Button>
+    </div>
+  );
+};
+
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState('url');
   const [finalQrValue, setFinalQrValue] = useState('');
@@ -67,6 +176,11 @@ export default function HomePage() {
   const [payment, setPayment] = useState({ bank: '', accountNumber: '', accountHolder: '', amount: '' });
   const [sms, setSms] = useState({ phone: '', message: '' });
   const [template, setTemplate] = useState('memo');
+  const [menuData, setMenuData] = useState({
+    shopName: '',
+    shopDescription: '',
+    categories: [{ name: '커피', items: [{ name: '아메리카노', price: '4,500원', description: '신선한 원두의 깊은 풍미' }] }]
+  });
   
   // Memo states
   const [memo, setMemo] = useState('');
@@ -128,7 +242,6 @@ export default function HomePage() {
       case 'vcard': {
         if (Object.values(vCard).every(field => field === '')) return;
         const params = new URLSearchParams({ type: 'vcard'});
-        // Manually append non-empty fields to avoid sending empty params
         Object.entries(vCard).forEach(([key, value]) => {
           if (value) {
             params.set(key, value);
@@ -157,6 +270,28 @@ export default function HomePage() {
         setFinalQrValue(`SMSTO:${sms.phone}:${sms.message}`);
         break;
       }
+      case 'menu': {
+        const filteredMenuData = {
+          ...menuData,
+          categories: menuData.categories
+            .map(cat => ({
+              ...cat,
+              items: cat.items.filter(item => item.name.trim() !== '')
+            }))
+            .filter(cat => cat.name.trim() !== '' && cat.items.length > 0)
+        };
+        if (filteredMenuData.shopName.trim() === '' || filteredMenuData.categories.length === 0) {
+            alert('가게 이름과 하나 이상의 메뉴 항목을 입력해주세요.');
+            return;
+        };
+        
+        const params = new URLSearchParams({ 
+          type: 'menu',
+          data: JSON.stringify(filteredMenuData)
+        });
+        setFinalQrValue(`${displayUrl}?${params.toString()}`);
+        break;
+      }
       default:
         setFinalQrValue('');
     }
@@ -183,6 +318,15 @@ export default function HomePage() {
                 <TemplateSelector selected={template} onChange={setTemplate} />
                 <MemoCustomizer memo={memo} setMemo={setMemo} color={memoColor} setColor={setMemoColor} size={memoSize} setSize={setMemoSize} />
                 <Button variant="primary" type="submit" className="mt-4 w-100">QR 코드 생성</Button>
+              </Form>
+            </Tab>
+            <Tab eventKey="menu" title="메뉴">
+              <Form onSubmit={handleGenerate}>
+                <MenuForm menuData={menuData} setMenuData={setMenuData} />
+                <div className="p-2">
+                    <MemoCustomizer memo={memo} setMemo={setMemo} color={memoColor} setColor={setMemoColor} size={memoSize} setSize={setMemoSize} />
+                    <Button variant="primary" type="submit" className="mt-4 w-100">QR 코드 생성</Button>
+                </div>
               </Form>
             </Tab>
             <Tab eventKey="sms" title="SMS">

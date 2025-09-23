@@ -13,6 +13,7 @@ export default function DisplayPage() {
 
   // Common data
   const text = searchParams.get('text');
+  const data = searchParams.get('data');
 
   // Payment data
   const bank = searchParams.get('bank');
@@ -80,6 +81,41 @@ VERSION:3.0
   };
 
   const renderContent = () => {
+    if (type === 'menu') {
+      try {
+        const menuData = JSON.parse(data || '{}');
+        if (!menuData.shopName) return <div>메뉴 정보가 올바르지 않습니다.</div>;
+
+        return (
+          <div className="menu-content">
+            <header className="menu-header">
+              <h1>{menuData.shopName}</h1>
+              {menuData.shopDescription && <p>{menuData.shopDescription}</p>}
+            </header>
+            {menuData.categories.map((category: any, index: number) => (
+              <section key={index} className="menu-category">
+                <h2>{category.name}</h2>
+                <div className="menu-items-container">
+                  {category.items.map((item: any, itemIndex: number) => (
+                    <div key={itemIndex} className="menu-item">
+                      <div className="item-info">
+                        <span className="item-name">{item.name}</span>
+                        {item.description && <span className="item-description">{item.description}</span>}
+                      </div>
+                      <span className="item-price">{item.price}</span>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            ))}
+          </div>
+        );
+      } catch (error) {
+        console.error("Failed to parse menu data:", error);
+        return <div>메뉴 정보를 불러오는 데 실패했습니다.</div>;
+      }
+    }
+
     if (type === 'vcard') {
       return (
         <>
@@ -128,9 +164,15 @@ VERSION:3.0
     return <p>{text || '내용이 없습니다.'}</p>;
   };
 
+  const getContainerClass = () => {
+    if (type === 'vcard') return 'business-card';
+    if (type === 'menu') return 'menu-template';
+    return template;
+  };
+
   return (
     <div className="template-container">
-      <div className={type === 'vcard' ? 'business-card' : template}>
+      <div className={getContainerClass()}>
         {renderContent()}
       </div>
     </div>
