@@ -96,7 +96,7 @@ VERSION:3.0
         if (view === 'welcome') {
           return (
             <div className="welcome-container">
-                <header className="menu-header">
+                <header className="menu-header welcome-header">
                     <h1>{menuData.shopName}</h1>
                     {menuData.shopDescription && <p>{menuData.shopDescription}</p>}
                 </header>
@@ -111,7 +111,7 @@ VERSION:3.0
         // view === 'menu'
         return (
           <div className="menu-content">
-            <header className="menu-header">
+            <header className="menu-header menu-view-header">
               <button onClick={() => setView('welcome')} className="back-link-btn">← 뒤로가기</button>
               <h1>{menuData.shopName}</h1>
               <p className="price-type-subtitle">({priceType === 'dineIn' ? '매장' : '포장'} 가격)</p>
