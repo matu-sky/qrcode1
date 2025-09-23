@@ -90,11 +90,27 @@ VERSION:3.0
     if (type === 'payment') {
       return (
         <>
-          {template === 'receipt' ? <h2>송금 정보</h2> : null}
-          <div className="item"><span className="label">은행</span><span>{bank}</span></div>
-          <div className="item"><span className="label">계좌번호</span><span>{accountNumber}</span></div>
-          {accountHolder && <div className="item"><span className="label">예금주</span><span>{accountHolder}</span></div>}
-          {amount && <div className="item"><span className="label">금액</span><span>{amount}원</span></div>}
+          {template === 'receipt' || template === 'bank-info-card' ? <h2>송금 정보</h2> : null}
+          <div className="item">
+            <span className="label">은행</span>
+            <span className="value">{bank}</span>
+          </div>
+          <div className="item">
+            <span className="label">계좌번호</span>
+            <span className="value account-number">{accountNumber}</span>
+          </div>
+          {accountHolder && (
+            <div className="item">
+              <span className="label">예금주</span>
+              <span className="value">{accountHolder}</span>
+            </div>
+          )}
+          {amount && (
+            <div className="item">
+              <span className="label">금액</span>
+              <span className="value">{amount}원</span>
+            </div>
+          )}
         </>
       );
     }

@@ -145,3 +145,47 @@
     color: #007bff;
     font-size: 1.2rem;
 }
+
+/* Bank Info Card Template */
+.bank-info-card {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    width: 90%;
+    max-width: 450px;
+    font-family: 'Noto Sans KR', sans-serif;
+    border-top: 6px solid #007bff;
+}
+
+.bank-info-card h2 {
+    text-align: center;
+    font-size: 1.7rem;
+    margin-bottom: 25px;
+    color: #333;
+}
+
+.bank-info-card .item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.bank-info-card .item:last-child {
+    border-bottom: none;
+}
+
+.bank-info-card .item .label {
+    font-weight: 500;
+    color: #555;
+}
+
+.bank-info-card .item .value.account-number {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #007bff;
+}

@@ -35,7 +35,8 @@ const MemoCustomizer = ({ memo, setMemo, color, setColor, size, setSize }: any) 
 const TemplateSelector = ({ selected, onChange }: { selected: string, onChange: (val: string) => void }) => (
   <Form.Group className="mt-4">
     <Form.Label>표시 템플릿 선택</Form.Label>
-    <div className="d-flex gap-3">
+    <div className="d-flex flex-wrap gap-3">
+      <Form.Check type="radio" label="계좌 정보" name="template" value="bank-info-card" checked={selected === 'bank-info-card'} onChange={(e) => onChange(e.target.value)} />
       <Form.Check type="radio" label="메모" name="template" value="memo" checked={selected === 'memo'} onChange={(e) => onChange(e.target.value)} />
       <Form.Check type="radio" label="포스트잇" name="template" value="sticky-note" checked={selected === 'sticky-note'} onChange={(e) => onChange(e.target.value)} />
       <Form.Check type="radio" label="영수증" name="template" value="receipt" checked={selected === 'receipt'} onChange={(e) => onChange(e.target.value)} />
@@ -79,12 +80,18 @@ export default function HomePage() {
   };
 
   const handleTabSelect = (k: string | null) => {
-    setActiveTab(k || 'url');
+    const newTab = k || 'url';
+    setActiveTab(newTab);
     setFinalQrValue('');
     setMemo('');
     setDisplayMemo({ text: '', color: '', size: '' });
     setMemoColor('#000000');
     setMemoSize('1.25rem');
+    if (newTab === 'payment') {
+      setTemplate('bank-info-card');
+    } else {
+      setTemplate('memo');
+    }
   };
 
   const handleDownload = () => {
