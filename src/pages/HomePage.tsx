@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Container, Row, Col, Tabs, Tab, Form, Button, Card, InputGroup, Image } from 'react-bootstrap';
+import { Container, Row, Col, Tabs, Tab, Form, Button, Card, InputGroup } from 'react-bootstrap';
 import { QRCodeCanvas as QRCode } from 'qrcode.react';
 import { toPng } from 'html-to-image';
 
@@ -51,17 +51,6 @@ const MenuForm = ({ menuData, setMenuData }: any) => {
     setMenuData({ ...menuData, [name]: value });
   };
 
-  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setMenuData({ ...menuData, shopLogo: reader.result as string });
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
   const handleCategoryChange = (catIndex: number, value: string) => {
     const newCategories = [...menuData.categories];
     newCategories[catIndex].name = value;
@@ -102,38 +91,27 @@ const MenuForm = ({ menuData, setMenuData }: any) => {
 
   return (
     <div className="p-2">
-      <Row>
-        <Col md={8}>
-          <Form.Group className="mb-3">
-            <Form.Label>가게 이름</Form.Label>
-            <Form.Control 
-              type="text" 
-              name="shopName"
-              placeholder="예: Gemini's Coffee" 
-              value={menuData.shopName} 
-              onChange={handleShopInfoChange} 
-            />
-          </Form.Group>
-          <Form.Group className="mb-3">
-            <Form.Label>가게 설명 (선택 사항)</Form.Label>
-            <Form.Control 
-              as="textarea"
-              rows={2}
-              name="shopDescription"
-              placeholder="손님들께 전하고 싶은 말을 적어보세요." 
-              value={menuData.shopDescription} 
-              onChange={handleShopInfoChange} 
-            />
-          </Form.Group>
-        </Col>
-        <Col md={4}>
-            <Form.Group className="mb-3">
-                <Form.Label>로고 업로드</Form.Label>
-                <Form.Control type="file" accept="image/*" onChange={handleLogoChange} />
-                {menuData.shopLogo && <Image src={menuData.shopLogo} thumbnail className="mt-2" style={{ maxHeight: '100px' }}/>}
-            </Form.Group>
-        </Col>
-      </Row>
+      <Form.Group className="mb-3">
+        <Form.Label>가게 이름</Form.Label>
+        <Form.Control 
+          type="text" 
+          name="shopName"
+          placeholder="예: Gemini's Coffee" 
+          value={menuData.shopName} 
+          onChange={handleShopInfoChange} 
+        />
+      </Form.Group>
+      <Form.Group className="mb-4">
+        <Form.Label>가게 설명 (선택 사항)</Form.Label>
+        <Form.Control 
+          as="textarea"
+          rows={2}
+          name="shopDescription"
+          placeholder="손님들께 전하고 싶은 말을 적어보세요." 
+          value={menuData.shopDescription} 
+          onChange={handleShopInfoChange} 
+        />
+      </Form.Group>
 
       {menuData.categories.map((category: any, catIndex: number) => (
         <Card key={catIndex} className="mb-4">
@@ -204,7 +182,6 @@ export default function HomePage() {
   const [menuData, setMenuData] = useState({
     shopName: '',
     shopDescription: '',
-    shopLogo: '',
     categories: [{ name: '커피', items: [{ name: '아메리카노', dineInPrice: '5,000원', takeoutPrice: '4,500원', description: '신선한 원두의 깊은 풍미' }] }]
   });
   
