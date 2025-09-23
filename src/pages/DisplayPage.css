@@ -244,40 +244,28 @@
 }
 
 .menu-header {
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     margin-bottom: 30px;
     border-bottom: 1px solid #eee;
     padding-bottom: 20px;
 }
 
-.menu-header h1 {
-    font-family: 'Playfair Display', serif;
-    color: #2c3e50;
-    font-size: 2.8rem;
-    margin-bottom: 5px;
+.header-left, .header-right {
+    flex: 1;
 }
 
-.menu-header p {
-    font-size: 1rem;
-    color: #7f8c8d;
+.header-right {
+    /* Empty for now, can be used for other icons later */
 }
 
-.welcome-container {
-    padding: 40px;
+.header-center {
+    flex: 2; /* Adjust as needed */
     text-align: center;
 }
 
-.choice-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin-top: 30px;
-}
-
 .back-link-btn {
-    position: absolute;
-    left: 0;
-    top: 0;
     /* Looks like a button */
     display: inline-block;
     font-weight: 400;
@@ -314,10 +302,6 @@
 }
 
 /* Adjust menu header for back link */
-.menu-header {
-    position: relative;
-}
-
 .menu-header h1 {
     margin-bottom: 0;
 }
