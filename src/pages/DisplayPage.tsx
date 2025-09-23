@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
 import './DisplayPage.css'; // Import the CSS
 
 export default function DisplayPage() {
   const [searchParams] = useSearchParams();
+  const [copied, setCopied] = useState(false);
 
   // Get template and content type from URL
   const template = searchParams.get('template') || 'memo';
@@ -30,6 +31,18 @@ export default function DisplayPage() {
     email: searchParams.get('email'),
     website: searchParams.get('website'),
     address: searchParams.get('address'),
+  };
+
+  const handleCopy = (copyText: string | null) => {
+    if (!copyText) return;
+    navigator.clipboard.writeText(copyText).then(() => {
+        setCopied(true);
+        setTimeout(() => {
+            setCopied(false);
+        }, 2000);
+    }).catch(err => {
+        console.error('Failed to copy: ', err);
+    });
   };
 
   const handleSaveVCard = () => {
@@ -97,7 +110,14 @@ VERSION:3.0
           </div>
           <div className="item">
             <span className="label">계좌번호</span>
-            <span className="value account-number">{accountNumber}</span>
+            <div className="value-container">
+                <span className="value account-number">{accountNumber}</span>
+                {template === 'bank-info-card' && accountNumber &&
+                <Button size="sm" variant={copied ? "success" : "outline-primary"} onClick={() => handleCopy(accountNumber)} className="copy-btn">
+                    {copied ? '복사됨!' : '복사'}
+                </Button>
+                }
+            </div>
           </div>
           {accountHolder && (
             <div className="item">
