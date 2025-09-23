@@ -104,33 +104,23 @@ VERSION:3.0
       return (
         <>
           {template === 'receipt' || template === 'bank-info-card' ? <h2>송금 정보</h2> : null}
-          <div className="item">
-            <span className="label">은행</span>
-            <span className="value">{bank}</span>
-          </div>
-          <div className="item">
-            <span className="label">계좌번호</span>
-            <div className="value-container">
-                <span className="value account-number">{accountNumber}</span>
-                {template === 'bank-info-card' && accountNumber &&
-                <Button size="sm" variant={copied ? "success" : "outline-primary"} onClick={() => handleCopy(accountNumber)} className="copy-btn">
-                    {copied ? '복사됨!' : '복사'}
-                </Button>
-                }
+          <div className="items-grid-container">
+            <div className="item-vertical">
+              <span className="label">은행</span>
+              <span className="value">{bank}</span>
             </div>
-          </div>
-          {accountHolder && (
-            <div className="item">
+            <div className="item-vertical">
               <span className="label">예금주</span>
               <span className="value">{accountHolder}</span>
             </div>
-          )}
-          {amount && (
-            <div className="item">
-              <span className="label">금액</span>
-              <span className="value">{amount}원</span>
+            <div className="item-vertical full-width">
+              <span className="label">계좌번호</span>
+              <span className="value account-number">{accountNumber}</span>
+              <Button size="sm" variant={copied ? "success" : "primary"} onClick={() => handleCopy(accountNumber)} className="copy-btn-full">
+                {copied ? '계좌번호 복사됨!' : '계좌번호 복사'}
+              </Button>
             </div>
-          )}
+          </div>
         </>
       );
     }
