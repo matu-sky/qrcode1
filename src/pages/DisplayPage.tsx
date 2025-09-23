@@ -18,7 +18,6 @@ export default function DisplayPage() {
   const bank = searchParams.get('bank');
   const accountNumber = searchParams.get('accountNumber');
   const accountHolder = searchParams.get('accountHolder');
-  const amount = searchParams.get('amount');
 
   // vCard data
   const vCardData = {
