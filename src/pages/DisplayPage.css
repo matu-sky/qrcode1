@@ -212,3 +212,12 @@
     margin-top: 10px;
     font-size: 0.9rem;
 }
+
+.bank-info-card .transfer-notice {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.9rem;
+    color: #6c757d;
+    border-top: 1px solid #e9ecef;
+    padding-top: 15px;
+}

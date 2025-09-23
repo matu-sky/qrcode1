@@ -120,6 +120,7 @@ VERSION:3.0
               </Button>
             </div>
           </div>
+          <p className="transfer-notice">송금후 이름을 말해주세요</p>
         </>
       );
     }
