@@ -262,10 +262,42 @@
     color: #7f8c8d;
 }
 
-.price-toggle-container {
+.welcome-container {
+    padding: 40px;
+    text-align: center;
+}
+
+.choice-buttons {
     display: flex;
-    justify-content: center;
-    margin-bottom: 30px;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.back-link {
+    display: block;
+    text-align: left;
+    margin-bottom: 20px;
+    color: #7f8c8d;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.back-link:hover {
+    color: #2c3e50;
+}
+
+/* Adjust menu header for back link */
+.menu-header {
+    position: relative;
+}
+
+.menu-header h1 {
+    margin-bottom: 0;
+}
+
+.menu-header p {
+    margin-top: 5px;
 }
 
 .menu-category {
