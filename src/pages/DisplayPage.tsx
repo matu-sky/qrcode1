@@ -112,14 +112,9 @@ VERSION:3.0
         return (
           <div className="menu-content">
             <header className="menu-header">
-              <div className="header-left">
-                <button onClick={() => setView('welcome')} className="back-link-btn">← 뒤로가기</button>
-              </div>
-              <div className="header-center">
-                <h1>{menuData.shopName}</h1>
-                <p className="price-type-subtitle">({priceType === 'dineIn' ? '매장' : '포장'} 가격)</p>
-              </div>
-              <div className="header-right"></div>
+              <button onClick={() => setView('welcome')} className="back-link-btn">← 뒤로가기</button>
+              <h1>{menuData.shopName}</h1>
+              <p className="price-type-subtitle">({priceType === 'dineIn' ? '매장' : '포장'} 가격)</p>
             </header>
 
             {menuData.categories.map((category: any, index: number) => (

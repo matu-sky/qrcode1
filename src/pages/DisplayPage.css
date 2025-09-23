@@ -244,50 +244,31 @@
 }
 
 .menu-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    text-align: center;
     margin-bottom: 30px;
     border-bottom: 1px solid #eee;
     padding-bottom: 20px;
 }
 
-.header-left, .header-right {
-    flex: 1;
-}
-
-.header-right {
-    /* Empty for now, can be used for other icons later */
-}
-
-.header-center {
-    flex: 2; /* Adjust as needed */
-    text-align: center;
-}
-
 .back-link-btn {
-    /* Looks like a button */
-    display: inline-block;
+    display: block; /* Takes its own line */
+    margin: 0 auto 15px auto; /* Centered horizontally, with bottom margin */
+    width: fit-content; /* Button size to content */
+    /* Button styles from before */
     font-weight: 400;
     line-height: 1.5;
     color: #fff;
     text-align: center;
-    text-decoration: none;
-    vertical-align: middle;
     cursor: pointer;
-    user-select: none;
     background-color: #0d6efd;
     border: 1px solid #0d6efd;
-    padding: 0.25rem 0.5rem; /* Smaller padding for a smaller button */
-    font-size: 0.875rem; /* Smaller font size */
-    border-radius: 0.2rem;
-    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    border-radius: 0.25rem;
 }
 
 .back-link-btn:hover {
-    color: #fff;
     background-color: #0b5ed7;
-    border-color: #0a58ca;
 }
 
 .price-type-subtitle {
@@ -301,7 +282,6 @@
     display: inline-block;
 }
 
-/* Adjust menu header for back link */
 .menu-header h1 {
     margin-bottom: 0;
 }
