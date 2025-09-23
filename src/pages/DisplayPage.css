@@ -262,6 +262,12 @@
     color: #7f8c8d;
 }
 
+.price-toggle-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
 .menu-category {
     margin-bottom: 30px;
 }

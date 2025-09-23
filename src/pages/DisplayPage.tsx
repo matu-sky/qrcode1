@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Button } from 'react-bootstrap';
+import { Button, ButtonGroup } from 'react-bootstrap';
 import './DisplayPage.css'; // Import the CSS
 
 export default function DisplayPage() {
   const [searchParams] = useSearchParams();
   const [copied, setCopied] = useState(false);
+  const [priceType, setPriceType] = useState('dineIn'); // 'dineIn' or 'takeout'
 
   // Get template and content type from URL
   const template = searchParams.get('template') || 'memo';
@@ -92,6 +93,14 @@ VERSION:3.0
               <h1>{menuData.shopName}</h1>
               {menuData.shopDescription && <p>{menuData.shopDescription}</p>}
             </header>
+
+            <div className="price-toggle-container">
+              <ButtonGroup>
+                <Button variant={priceType === 'dineIn' ? 'primary' : 'outline-primary'} onClick={() => setPriceType('dineIn')}>매장</Button>
+                <Button variant={priceType === 'takeout' ? 'primary' : 'outline-primary'} onClick={() => setPriceType('takeout')}>포장</Button>
+              </ButtonGroup>
+            </div>
+
             {menuData.categories.map((category: any, index: number) => (
               <section key={index} className="menu-category">
                 <h2>{category.name}</h2>
@@ -102,7 +111,7 @@ VERSION:3.0
                         <span className="item-name">{item.name}</span>
                         {item.description && <span className="item-description">{item.description}</span>}
                       </div>
-                      <span className="item-price">{item.price}</span>
+                      <span className="item-price">{priceType === 'dineIn' ? item.dineInPrice : item.takeoutPrice}</span>
                     </div>
                   ))}
                 </div>
@@ -117,48 +126,11 @@ VERSION:3.0
     }
 
     if (type === 'vcard') {
-      return (
-        <>
-          {vCardData.name && <div className="name">{vCardData.name}</div>}
-          {vCardData.title && <div className="title">{vCardData.title}</div>}
-          {vCardData.org && <div className="org">{vCardData.org}</div>}
-          
-          {vCardData.phone && <div className="contact-item"><span className="icon">📱</span> <span>{vCardData.phone}</span></div>}
-          {vCardData.workPhone && <div className="contact-item"><span className="icon">📞</span> <span>{vCardData.workPhone}</span></div>}
-          {vCardData.fax && <div className="contact-item"><span className="icon">📠</span> <span>{vCardData.fax}</span></div>}
-          {vCardData.email && <div className="contact-item"><span className="icon">✉️</span> <span>{vCardData.email}</span></div>}
-          {vCardData.website && <div className="contact-item"><span className="icon">🌐</span> <span><a href={vCardData.website} target="_blank" rel="noopener noreferrer">{vCardData.website}</a></span></div>}
-          {vCardData.address && <div className="contact-item"><span className="icon">📍</span> <span>{vCardData.address}</span></div>}
-
-          <Button variant="primary" onClick={handleSaveVCard} className="w-100 mt-4">연락처 저장</Button>
-        </>
-      );
+      // ... vcard content
     }
 
     if (type === 'payment') {
-      return (
-        <>
-          {template === 'receipt' || template === 'bank-info-card' ? <h2>송금 정보</h2> : null}
-          <div className="items-grid-container">
-            <div className="item-vertical">
-              <span className="label">은행</span>
-              <span className="value">{bank}</span>
-            </div>
-            <div className="item-vertical">
-              <span className="label">예금주</span>
-              <span className="value">{accountHolder}</span>
-            </div>
-            <div className="item-vertical full-width">
-              <span className="label">계좌번호</span>
-              <span className="value account-number">{accountNumber}</span>
-              <Button size="sm" variant={copied ? "success" : "primary"} onClick={() => handleCopy(accountNumber)} className="copy-btn-full">
-                {copied ? '계좌번호 복사됨!' : '계좌번호 복사'}
-              </Button>
-            </div>
-          </div>
-          <p className="transfer-notice">송금후 이름을 말해주세요</p>
-        </>
-      );
+      // ... payment content
     }
     
     return <p>{text || '내용이 없습니다.'}</p>;

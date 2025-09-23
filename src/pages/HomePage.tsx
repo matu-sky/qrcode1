@@ -67,7 +67,7 @@ const MenuForm = ({ menuData, setMenuData }: any) => {
   const addCategory = () => {
     setMenuData({
       ...menuData,
-      categories: [...menuData.categories, { name: '', items: [{ name: '', price: '', description: '' }] }]
+      categories: [...menuData.categories, { name: '', items: [{ name: '', dineInPrice: '', takeoutPrice: '', description: '' }] }]
     });
   };
 
@@ -79,7 +79,7 @@ const MenuForm = ({ menuData, setMenuData }: any) => {
 
   const addItem = (catIndex: number) => {
     const newCategories = [...menuData.categories];
-    newCategories[catIndex].items.push({ name: '', price: '', description: '' });
+    newCategories[catIndex].items.push({ name: '', dineInPrice: '', takeoutPrice: '', description: '' });
     setMenuData({ ...menuData, categories: newCategories });
   };
 
@@ -130,16 +130,19 @@ const MenuForm = ({ menuData, setMenuData }: any) => {
           <Card.Body>
             {category.items.map((item: any, itemIndex: number) => (
               <Row key={itemIndex} className="mb-3 align-items-center">
-                <Col md={4}>
+                <Col xs={12} md={3} className="mb-2 mb-md-0">
                   <Form.Control name="name" placeholder="메뉴 이름" value={item.name} onChange={(e) => handleItemChange(catIndex, itemIndex, e)} />
                 </Col>
-                <Col md={3}>
-                  <Form.Control name="price" placeholder="가격" value={item.price} onChange={(e) => handleItemChange(catIndex, itemIndex, e)} />
+                <Col xs={6} md={2}>
+                  <Form.Control name="dineInPrice" placeholder="매장 가격" value={item.dineInPrice} onChange={(e) => handleItemChange(catIndex, itemIndex, e)} />
                 </Col>
-                <Col md={4}>
+                <Col xs={6} md={2}>
+                  <Form.Control name="takeoutPrice" placeholder="포장 가격" value={item.takeoutPrice} onChange={(e) => handleItemChange(catIndex, itemIndex, e)} />
+                </Col>
+                <Col xs={12} md={4} className="mb-2 mb-md-0">
                   <Form.Control name="description" placeholder="설명 (선택)" value={item.description} onChange={(e) => handleItemChange(catIndex, itemIndex, e)} />
                 </Col>
-                <Col md={1} className="text-end">
+                <Col xs={12} md={1} className="text-end">
                   <Button variant="outline-secondary" size="sm" onClick={() => removeItem(catIndex, itemIndex)}>–</Button>
                 </Col>
               </Row>
@@ -179,7 +182,7 @@ export default function HomePage() {
   const [menuData, setMenuData] = useState({
     shopName: '',
     shopDescription: '',
-    categories: [{ name: '커피', items: [{ name: '아메리카노', price: '4,500원', description: '신선한 원두의 깊은 풍미' }] }]
+    categories: [{ name: '커피', items: [{ name: '아메리카노', dineInPrice: '5,000원', takeoutPrice: '4,500원', description: '신선한 원두의 깊은 풍미' }] }]
   });
   
   // Memo states
