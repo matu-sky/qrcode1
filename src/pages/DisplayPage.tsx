@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Button } from 'react-bootstrap';
+import { Button, ButtonGroup } from 'react-bootstrap';
 import './DisplayPage.css'; // Import the CSS
 
 export default function DisplayPage() {
@@ -48,7 +48,38 @@ export default function DisplayPage() {
   };
 
   const handleSaveVCard = () => {
-    // ... (same as before)
+    let vCardString = `BEGIN:VCARD
+VERSION:3.0
+`;
+    if(vCardData.name) vCardString += `FN:${vCardData.name}
+`;
+    if(vCardData.org) vCardString += `ORG:${vCardData.org}
+`;
+    if(vCardData.title) vCardString += `TITLE:${vCardData.title}
+`;
+    if(vCardData.phone) vCardString += `TEL;TYPE=CELL:${vCardData.phone}
+`;
+    if(vCardData.workPhone) vCardString += `TEL;TYPE=WORK,VOICE:${vCardData.workPhone}
+`;
+    if(vCardData.fax) vCardString += `TEL;TYPE=FAX:${vCardData.fax}
+`;
+    if(vCardData.email) vCardString += `EMAIL:${vCardData.email}
+`;
+    if(vCardData.website) vCardString += `URL:${vCardData.website}
+`;
+    if(vCardData.address) vCardString += `ADR;TYPE=WORK:;;${vCardData.address}
+`;
+    vCardString += `END:VCARD`;
+
+    const blob = new Blob([vCardString], { type: 'text/vcard;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${vCardData.name || 'contact'}.vcf`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   const handlePriceSelection = (type: string) => {
@@ -81,7 +112,7 @@ export default function DisplayPage() {
         return (
           <div className="menu-content">
             <header className="menu-header">
-              <a href="#" onClick={(e) => { e.preventDefault(); setView('welcome'); }} className="back-link">← 뒤로가기</a>
+              <button onClick={() => setView('welcome')} className="back-link-btn">← 뒤로가기</button>
               <h1>{menuData.shopName}</h1>
               <p>({priceType === 'dineIn' ? '매장' : '포장'} 가격)</p>
             </header>
@@ -110,12 +141,49 @@ export default function DisplayPage() {
       }
     }
 
-    // ... (vcard and payment render blocks remain the same)
     if (type === 'vcard') {
-        // ...
+      return (
+        <>
+          {vCardData.name && <div className="name">{vCardData.name}</div>}
+          {vCardData.title && <div className="title">{vCardData.title}</div>}
+          {vCardData.org && <div className="org">{vCardData.org}</div>}
+          
+          {vCardData.phone && <div className="contact-item"><span className="icon">📱</span> <span>{vCardData.phone}</span></div>}
+          {vCardData.workPhone && <div className="contact-item"><span className="icon">📞</span> <span>{vCardData.workPhone}</span></div>}
+          {vCardData.fax && <div className="contact-item"><span className="icon">📠</span> <span>{vCardData.fax}</span></div>}
+          {vCardData.email && <div className="contact-item"><span className="icon">✉️</span> <span>{vCardData.email}</span></div>}
+          {vCardData.website && <div className="contact-item"><span className="icon">🌐</span> <span><a href={vCardData.website} target="_blank" rel="noopener noreferrer">{vCardData.website}</a></span></div>}
+          {vCardData.address && <div className="contact-item"><span className="icon">📍</span> <span>{vCardData.address}</span></div>}
+
+          <Button variant="primary" onClick={handleSaveVCard} className="w-100 mt-4">연락처 저장</Button>
+        </>
+      );
     }
+
     if (type === 'payment') {
-        // ...
+      return (
+        <>
+          {template === 'receipt' || template === 'bank-info-card' ? <h2>송금 정보</h2> : null}
+          <div className="items-grid-container">
+            <div className="item-vertical">
+              <span className="label">은행</span>
+              <span className="value">{bank}</span>
+            </div>
+            <div className="item-vertical">
+              <span className="label">예금주</span>
+              <span className="value">{accountHolder}</span>
+            </div>
+            <div className="item-vertical full-width">
+              <span className="label">계좌번호</span>
+              <span className="value account-number">{accountNumber}</span>
+              <Button size="sm" variant={copied ? "success" : "primary"} onClick={() => handleCopy(accountNumber)} className="copy-btn-full">
+                {copied ? '계좌번호 복사됨!' : '계좌번호 복사'}
+              </Button>
+            </div>
+          </div>
+          <p className="transfer-notice">송금후 이름을 말해주세요</p>
+        </>
+      );
     }
     
     return <p>{text || '내용이 없습니다.'}</p>;
