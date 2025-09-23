@@ -114,7 +114,7 @@ VERSION:3.0
             <header className="menu-header">
               <button onClick={() => setView('welcome')} className="back-link-btn">← 뒤로가기</button>
               <h1>{menuData.shopName}</h1>
-              <p>({priceType === 'dineIn' ? '매장' : '포장'} 가격)</p>
+              <p className="price-type-subtitle">({priceType === 'dineIn' ? '매장' : '포장'} 가격)</p>
             </header>
 
             {menuData.categories.map((category: any, index: number) => (
