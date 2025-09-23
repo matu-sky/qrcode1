@@ -57,7 +57,7 @@ const MenuForm = ({ menuData, setMenuData }: any) => {
     setMenuData({ ...menuData, categories: newCategories });
   };
 
-  const handleItemChange = (catIndex: number, itemIndex: number, e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleItemChange = (catIndex: number, itemIndex: number, e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     const newCategories = [...menuData.categories];
     newCategories[catIndex].items[itemIndex] = { ...newCategories[catIndex].items[itemIndex], [name]: value };
