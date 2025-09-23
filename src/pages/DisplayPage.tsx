@@ -97,6 +97,7 @@ VERSION:3.0
           return (
             <div className="welcome-container">
                 <header className="menu-header welcome-header">
+                    {menuData.shopLogoUrl && <img src={menuData.shopLogoUrl} alt={`${menuData.shopName} Logo`} className="shop-logo" />}
                     <h1>{menuData.shopName}</h1>
                     {menuData.shopDescription && <p>{menuData.shopDescription}</p>}
                 </header>
@@ -113,7 +114,10 @@ VERSION:3.0
           <div className="menu-content">
             <header className="menu-header menu-view-header">
               <button onClick={() => setView('welcome')} className="back-link-btn">← 뒤로가기</button>
-              <h1>{menuData.shopName}</h1>
+              <div className="header-center-content">
+                {menuData.shopLogoUrl && <img src={menuData.shopLogoUrl} alt={`${menuData.shopName} Logo`} className="shop-logo small" />}
+                <h1>{menuData.shopName}</h1>
+              </div>
               <p className="price-type-subtitle">({priceType === 'dineIn' ? '매장' : '포장'} 가격)</p>
             </header>
 

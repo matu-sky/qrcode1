@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Container, Row, Col, Tabs, Tab, Form, Button, Card, InputGroup } from 'react-bootstrap';
+import { Container, Row, Col, Tabs, Tab, Form, Button, Card, InputGroup, Image } from 'react-bootstrap';
 import { QRCodeCanvas as QRCode } from 'qrcode.react';
 import { toPng } from 'html-to-image';
 
@@ -91,27 +91,38 @@ const MenuForm = ({ menuData, setMenuData }: any) => {
 
   return (
     <div className="p-2">
-      <Form.Group className="mb-3">
-        <Form.Label>가게 이름</Form.Label>
-        <Form.Control 
-          type="text" 
-          name="shopName"
-          placeholder="예: Gemini's Coffee" 
-          value={menuData.shopName} 
-          onChange={handleShopInfoChange} 
-        />
-      </Form.Group>
-      <Form.Group className="mb-4">
-        <Form.Label>가게 설명 (선택 사항)</Form.Label>
-        <Form.Control 
-          as="textarea"
-          rows={2}
-          name="shopDescription"
-          placeholder="손님들께 전하고 싶은 말을 적어보세요." 
-          value={menuData.shopDescription} 
-          onChange={handleShopInfoChange} 
-        />
-      </Form.Group>
+        <Row>
+            <Col md={8}>
+                <Form.Group className="mb-3">
+                    <Form.Label>가게 이름</Form.Label>
+                    <Form.Control 
+                    type="text" 
+                    name="shopName"
+                    placeholder="예: Gemini's Coffee" 
+                    value={menuData.shopName} 
+                    onChange={handleShopInfoChange} 
+                    />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                    <Form.Label>가게 설명 (선택 사항)</Form.Label>
+                    <Form.Control 
+                    as="textarea"
+                    rows={2}
+                    name="shopDescription"
+                    placeholder="손님들께 전하고 싶은 말을 적어보세요." 
+                    value={menuData.shopDescription} 
+                    onChange={handleShopInfoChange} 
+                    />
+                </Form.Group>
+            </Col>
+            <Col md={4}>
+                <Form.Group className="mb-3">
+                    <Form.Label>로고 이미지 주소 (URL)</Form.Label>
+                    <Form.Control type="url" name="shopLogoUrl" placeholder="https://example.com/logo.png" value={menuData.shopLogoUrl} onChange={handleShopInfoChange} />
+                    {menuData.shopLogoUrl && <Image src={menuData.shopLogoUrl} thumbnail className="mt-2" style={{ maxHeight: '100px' }}/>}
+                </Form.Group>
+            </Col>
+        </Row>
 
       {menuData.categories.map((category: any, catIndex: number) => (
         <Card key={catIndex} className="mb-4">
@@ -182,6 +193,7 @@ export default function HomePage() {
   const [menuData, setMenuData] = useState({
     shopName: '',
     shopDescription: '',
+    shopLogoUrl: '',
     categories: [{ name: '커피', items: [{ name: '아메리카노', dineInPrice: '5,000원', takeoutPrice: '4,500원', description: '신선한 원두의 깊은 풍미' }] }]
   });
   
@@ -389,7 +401,7 @@ export default function HomePage() {
                   </div>
                   <br />
                   <Button variant="secondary" onClick={handleDownload} className="mt-3">다운로드</Button>
-                </> 
+                </>
                 : 
                 <p className="qr-code-placeholder">내용 입력 후 'QR 코드 생성' 버튼을 눌러주세요.</p>
               }
