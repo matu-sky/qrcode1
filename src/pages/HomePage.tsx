@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Container, Row, Col, Tabs, Tab, Form, Button } from 'react-bootstrap';
 import { QRCodeCanvas as QRCode } from 'qrcode.react';
+import { toPng } from 'html-to-image';
 
 // Reusable Memo Customizer Component
 const MemoCustomizer = ({ memo, setMemo, color, setColor, size, setSize }: any) => (
@@ -88,16 +89,16 @@ export default function HomePage() {
 
   const handleDownload = () => {
     if (qrRef.current) {
-      const canvas = qrRef.current.querySelector('canvas');
-      if (canvas) {
-        const image = canvas.toDataURL('image/png');
-        const link = document.createElement('a');
-        link.href = image;
-        link.download = 'qr-code.png';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }
+      toPng(qrRef.current, { cacheBust: true })
+        .then((dataUrl) => {
+          const link = document.createElement('a');
+          link.download = 'qr-code-with-memo.png';
+          link.href = dataUrl;
+          link.click();
+        })
+        .catch((err) => {
+          console.error('oops, something went wrong!', err);
+        });
     }
   };
 
