@@ -225,12 +225,15 @@ export default function HomePage() {
         </Col>
         <Col md={5} className="text-center">
           <div className="qr-code-container d-flex justify-content-center align-items-center">
-            <div ref={qrRef} className="text-center">
+            <div className="text-center">
               <h4 className="mb-3">생성된 QR 코드</h4>
               {finalQrValue ? 
-                <>
-                  {displayMemo.text && <p className="qr-memo mb-2" style={{ color: displayMemo.color, fontSize: displayMemo.size }}>{displayMemo.text}</p>}
-                  <QRCode value={finalQrValue} size={256} />
+                <> 
+                  <div ref={qrRef} className="qr-code-wrapper p-3 d-inline-block bg-white">
+                    {displayMemo.text && <p className="qr-memo mb-2" style={{ color: displayMemo.color, fontSize: displayMemo.size }}>{displayMemo.text}</p>}
+                    <QRCode value={finalQrValue} size={256} />
+                  </div>
+                  <br />
                   <Button variant="secondary" onClick={handleDownload} className="mt-3">다운로드</Button>
                 </> 
                 : 
