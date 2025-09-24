@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Container, Row, Col, Tabs, Tab, Form, Button, Card, InputGroup, Image } from 'react-bootstrap';
 import { QRCodeCanvas as QRCode } from 'qrcode.react';
 import { toPng } from 'html-to-image';
+import { supabase } from '../supabaseClient';
 
 // Reusable Memo Customizer Component
 const MemoCustomizer = ({ memo, setMemo, color, setColor, size, setSize }: any) => (
@@ -238,7 +239,7 @@ export default function HomePage() {
     }
   };
 
-  const handleGenerate = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleGenerate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setDisplayMemo({ text: memo, color: memoColor, size: memoSize });
     const baseUrl = window.location.origin;
@@ -300,11 +301,25 @@ export default function HomePage() {
             return;
         };
         
-        const params = new URLSearchParams({ 
-          type: 'menu',
-          data: JSON.stringify(filteredMenuData)
-        });
-        setFinalQrValue(`${displayUrl}?${params.toString()}`);
+        // Save to Supabase
+        const { data, error } = await supabase
+          .from('menus')
+          .insert([
+            { data: filteredMenuData },
+          ])
+          .select();
+
+        if (error) {
+          console.error('Error inserting menu data:', error);
+          alert('메뉴 저장 중 오류가 발생했습니다.');
+          return;
+        }
+
+        if (data) {
+          const menuId = data[0].id;
+          const params = new URLSearchParams({ type: 'menu', id: menuId });
+          setFinalQrValue(`${displayUrl}?${params.toString()}`);
+        }
         break;
       }
       default:

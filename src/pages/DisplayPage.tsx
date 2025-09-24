@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Button } from 'react-bootstrap';
+import { Button, Spinner } from 'react-bootstrap';
+import { supabase } from '../supabaseClient';
 import './DisplayPage.css'; // Import the CSS
 
 export default function DisplayPage() {
@@ -8,14 +9,18 @@ export default function DisplayPage() {
   const [copied, setCopied] = useState(false);
   const [priceType, setPriceType] = useState('dineIn'); // 'dineIn' or 'takeout'
   const [view, setView] = useState('welcome'); // 'welcome' or 'menu'
+  
+  const [menuData, setMenuData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Get template and content type from URL
   const template = searchParams.get('template') || 'memo';
   const type = searchParams.get('type') || 'text';
+  const menuId = searchParams.get('id');
 
   // Common data
   const text = searchParams.get('text');
-  const data = searchParams.get('data');
 
   // Payment data
   const bank = searchParams.get('bank');
@@ -35,6 +40,34 @@ export default function DisplayPage() {
     address: searchParams.get('address'),
   };
 
+  useEffect(() => {
+    if (type === 'menu' && menuId) {
+      const fetchMenuData = async () => {
+        setLoading(true);
+        const { data, error } = await supabase
+          .from('menus')
+          .select('data')
+          .eq('id', menuId)
+          .single();
+
+        if (error) {
+          console.error('Error fetching menu data:', error);
+          setError('메뉴 정보를 불러오는 데 실패했습니다.');
+          setMenuData(null);
+        } else if (data) {
+          setMenuData(data.data); // The menu content is in the 'data' jsonb column
+        } else {
+          setError('해당 메뉴를 찾을 수 없습니다.');
+        }
+        setLoading(false);
+      };
+
+      fetchMenuData();
+    } else if (type !== 'menu') {
+      setLoading(false);
+    }
+  }, [type, menuId]);
+
   const handleCopy = (copyText: string | null) => {
     if (!copyText) return;
     navigator.clipboard.writeText(copyText).then(() => {
@@ -48,27 +81,16 @@ export default function DisplayPage() {
   };
 
   const handleSaveVCard = () => {
-    let vCardString = `BEGIN:VCARD
-VERSION:3.0
-`;
-    if(vCardData.name) vCardString += `FN:${vCardData.name}
-`;
-    if(vCardData.org) vCardString += `ORG:${vCardData.org}
-`;
-    if(vCardData.title) vCardString += `TITLE:${vCardData.title}
-`;
-    if(vCardData.phone) vCardString += `TEL;TYPE=CELL:${vCardData.phone}
-`;
-    if(vCardData.workPhone) vCardString += `TEL;TYPE=WORK,VOICE:${vCardData.workPhone}
-`;
-    if(vCardData.fax) vCardString += `TEL;TYPE=FAX:${vCardData.fax}
-`;
-    if(vCardData.email) vCardString += `EMAIL:${vCardData.email}
-`;
-    if(vCardData.website) vCardString += `URL:${vCardData.website}
-`;
-    if(vCardData.address) vCardString += `ADR;TYPE=WORK:;;${vCardData.address}
-`;
+    let vCardString = `BEGIN:VCARD\nVERSION:3.0\n`;
+    if(vCardData.name) vCardString += `FN:${vCardData.name}\n`;
+    if(vCardData.org) vCardString += `ORG:${vCardData.org}\n`;
+    if(vCardData.title) vCardString += `TITLE:${vCardData.title}\n`;
+    if(vCardData.phone) vCardString += `TEL;TYPE=CELL:${vCardData.phone}\n`;
+    if(vCardData.workPhone) vCardString += `TEL;TYPE=WORK,VOICE:${vCardData.workPhone}\n`;
+    if(vCardData.fax) vCardString += `TEL;TYPE=FAX:${vCardData.fax}\n`;
+    if(vCardData.email) vCardString += `EMAIL:${vCardData.email}\n`;
+    if(vCardData.website) vCardString += `URL:${vCardData.website}\n`;
+    if(vCardData.address) vCardString += `ADR;TYPE=WORK:;;${vCardData.address}\n`;
     vCardString += `END:VCARD`;
 
     const blob = new Blob([vCardString], { type: 'text/vcard;charset=utf-8;' });
@@ -88,61 +110,63 @@ VERSION:3.0
   }
 
   const renderContent = () => {
+    if (loading) {
+      return <div className="text-center p-5"><Spinner animation="border" /></div>;
+    }
+
+    if (error) {
+      return <div className="text-center p-5 text-danger">{error}</div>;
+    }
+
     if (type === 'menu') {
-      try {
-        const menuData = JSON.parse(data || '{}');
-        if (!menuData.shopName) return <div>메뉴 정보가 올바르지 않습니다.</div>;
+      if (!menuData || !menuData.shopName) return <div className="text-center p-5 text-danger">메뉴 정보가 올바르지 않습니다.</div>;
 
-        if (view === 'welcome') {
-          return (
-            <div className="welcome-container">
-                <header className="menu-header welcome-header">
-                    {menuData.shopLogoUrl && <img src={menuData.shopLogoUrl} alt={`${menuData.shopName} Logo`} className="shop-logo" />}
-                    <h1>{menuData.shopName}</h1>
-                    {menuData.shopDescription && <p>{menuData.shopDescription}</p>}
-                </header>
-                <div className="choice-buttons">
-                    <Button variant="primary" size="lg" onClick={() => handlePriceSelection('dineIn')}>매장에서 먹고 갈래요</Button>
-                    <Button variant="outline-primary" size="lg" onClick={() => handlePriceSelection('takeout')}>포장해서 갈래요</Button>
-                </div>
-            </div>
-          );
-        }
-
-        // view === 'menu'
+      if (view === 'welcome') {
         return (
-          <div className="menu-content">
-            <header className="menu-header menu-view-header">
-              <button onClick={() => setView('welcome')} className="back-link-btn">← 뒤로가기</button>
-              <div className="header-center-content">
-                {menuData.shopLogoUrl && <img src={menuData.shopLogoUrl} alt={`${menuData.shopName} Logo`} className="shop-logo small" />}
-                <h1>{menuData.shopName}</h1>
+          <div className="welcome-container">
+              <header className="menu-header welcome-header">
+                  {menuData.shopLogoUrl && <img src={menuData.shopLogoUrl} alt={`${menuData.shopName} Logo`} className="shop-logo" />} 
+                  <h1>{menuData.shopName}</h1>
+                  {menuData.shopDescription && <p>{menuData.shopDescription}</p>}
+              </header>
+              <div className="choice-buttons">
+                  <Button variant="primary" size="lg" onClick={() => handlePriceSelection('dineIn')}>매장에서 먹고 갈래요</Button>
+                  <Button variant="outline-primary" size="lg" onClick={() => handlePriceSelection('takeout')}>포장해서 갈래요</Button>
               </div>
-              <p className="price-type-subtitle">({priceType === 'dineIn' ? '매장' : '포장'} 가격)</p>
-            </header>
-
-            {menuData.categories.map((category: any, index: number) => (
-              <section key={index} className="menu-category">
-                <h2>{category.name}</h2>
-                <div className="menu-items-container">
-                  {category.items.map((item: any, itemIndex: number) => (
-                    <div key={itemIndex} className="menu-item">
-                      <div className="item-info">
-                        <span className="item-name">{item.name}</span>
-                        {item.description && <span className="item-description">{item.description}</span>}
-                      </div>
-                      <span className="item-price">{priceType === 'dineIn' ? item.dineInPrice : item.takeoutPrice}</span>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            ))}
           </div>
         );
-      } catch (error) {
-        console.error("Failed to parse menu data:", error);
-        return <div>메뉴 정보를 불러오는 데 실패했습니다.</div>;
       }
+
+      // view === 'menu'
+      return (
+        <div className="menu-content">
+          <header className="menu-header menu-view-header">
+            <button onClick={() => setView('welcome')} className="back-link-btn">← 뒤로가기</button>
+            <div className="header-center-content">
+              {menuData.shopLogoUrl && <img src={menuData.shopLogoUrl} alt={`${menuData.shopName} Logo`} className="shop-logo small" />} 
+              <h1>{menuData.shopName}</h1>
+            </div>
+            <p className="price-type-subtitle">({priceType === 'dineIn' ? '매장' : '포장'} 가격)</p>
+          </header>
+
+          {menuData.categories.map((category: any, index: number) => (
+            <section key={index} className="menu-category">
+              <h2>{category.name}</h2>
+              <div className="menu-items-container">
+                {category.items.map((item: any, itemIndex: number) => (
+                  <div key={itemIndex} className="menu-item">
+                    <div className="item-info">
+                      <span className="item-name">{item.name}</span>
+                      {item.description && <span className="item-description">{item.description}</span>}
+                    </div>
+                    <span className="item-price">{priceType === 'dineIn' ? item.dineInPrice : item.takeoutPrice}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
+      );
     }
 
     if (type === 'vcard') {
