@@ -311,7 +311,7 @@ export default function HomePage() {
 
         if (error) {
           console.error('Error inserting menu data:', error);
-          alert('메뉴 저장 중 오류가 발생했습니다.');
+          alert('메뉴 저장 중 오류가 발생했습니다.: ' + JSON.stringify(error));
           return;
         }
 
