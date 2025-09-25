@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Container, Row, Col, Tabs, Tab, Form, Button, Card, InputGroup, Image } from 'react-bootstrap';
 import { QRCodeCanvas as QRCode } from 'qrcode.react';
 import { toPng } from 'html-to-image';
@@ -105,7 +106,10 @@ const MenuForm = ({ menuData, setMenuData }: any) => {
                     />
                 </Form.Group>
                 <Form.Group className="mb-3">
-                    <Form.Label>가게 설명 (선택 사항)</Form.Label>
+                    <div className="d-flex justify-content-between align-items-center">
+                      <Form.Label>가게 설명 (선택 사항)</Form.Label>
+                      <Link to="/list" className="btn btn-sm btn-outline-secondary">저장된 목록 보기</Link>
+                    </div>
                     <Form.Control 
                     as="textarea"
                     rows={2}
