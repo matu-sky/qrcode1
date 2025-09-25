@@ -203,6 +203,31 @@ export default function HomePage() {
   const [memoColor, setMemoColor] = useState('#000000');
   const [memoSize, setMemoSize] = useState('1.25rem');
   const [displayMemo, setDisplayMemo] = useState({ text: '', color: '', size: '' });
+  const [editId, setEditId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const editIdParam = params.get('edit_id');
+    if (editIdParam) {
+      setEditId(editIdParam);
+      setActiveTab('menu');
+      const fetchMenu = async () => {
+        const { data, error } = await supabase
+          .from('menus')
+          .select('data')
+          .eq('id', editIdParam)
+          .single();
+        
+        if (error) {
+          console.error('Error fetching menu:', error);
+          alert('메뉴 정보를 불러오는 데 실패했습니다.');
+        } else if (data) {
+          setMenuData(data.data);
+        }
+      };
+      fetchMenu();
+    }
+  }, []);
 
   const handleVCardChange = (e: any) => {
     const { name, value } = e.target;
@@ -301,24 +326,44 @@ export default function HomePage() {
             return;
         };
         
-        // Save to Supabase
-        const { data, error } = await supabase
-          .from('menus')
-          .insert([
-            { data: filteredMenuData },
-          ])
-          .select();
+        // Save or Update in Supabase
+        if (editId) {
+          // Update existing menu
+          const { error } = await supabase
+            .from('menus')
+            .update({ data: filteredMenuData })
+            .eq('id', editId);
 
-        if (error) {
-          console.error('Error inserting menu data:', error);
-          alert('메뉴 저장 중 오류가 발생했습니다.');
-          return;
-        }
+          if (error) {
+            console.error('Error updating menu data:', error);
+            alert('메뉴 수정 중 오류가 발생했습니다.');
+            return;
+          }
 
-        if (data) {
-          const menuId = data[0].id;
-          const params = new URLSearchParams({ type: 'menu', id: menuId });
+          alert('메뉴가 성공적으로 수정되었습니다.');
+          const params = new URLSearchParams({ type: 'menu', id: editId });
           setFinalQrValue(`${displayUrl}?${params.toString()}`);
+
+        } else {
+          // Create new menu
+          const { data, error } = await supabase
+            .from('menus')
+            .insert([
+              { data: filteredMenuData },
+            ])
+            .select();
+
+          if (error) {
+            console.error('Error inserting menu data:', error);
+            alert('메뉴 저장 중 오류가 발생했습니다.');
+            return;
+          }
+
+          if (data) {
+            const menuId = data[0].id;
+            const params = new URLSearchParams({ type: 'menu', id: menuId });
+            setFinalQrValue(`${displayUrl}?${params.toString()}`);
+          }
         }
         break;
       }
@@ -355,7 +400,7 @@ export default function HomePage() {
                 <MenuForm menuData={menuData} setMenuData={setMenuData} />
                 <div className="p-2">
                     <MemoCustomizer memo={memo} setMemo={setMemo} color={memoColor} setColor={setMemoColor} size={memoSize} setSize={setMemoSize} />
-                    <Button variant="primary" type="submit" className="mt-4 w-100">QR 코드 생성</Button>
+                    <Button variant="primary" type="submit" className="mt-4 w-100">{editId ? '메뉴 수정' : 'QR 코드 생성'}</Button>
                 </div>
               </Form>
             </Tab>
