@@ -388,6 +388,14 @@
     background-color: #e7f1ff;
 }
 
+.accordion-button.collapsed:hover {
+    background-color: #f8f9fa;
+}
+
+.accordion-button.collapsed:active {
+    background-color: #e9ecef;
+}
+
 .accordion-body {
     padding: 0.5rem 1.25rem;
 }
