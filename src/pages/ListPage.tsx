@@ -30,13 +30,12 @@ export default function ListPage() {
         setError('메뉴 목록을 불러오는 데 실패했습니다.');
         setMenus([]);
       } else if (data) {
-        // The type assertion is needed because Supabase returns a generic object
         const typedData = data as any[];
         setMenus(typedData.map(item => ({
           id: item.id,
           created_at: item.created_at,
           data: {
-            shopName: item.shopName || '이름 없음' // Handle cases where shopName might be null
+            shopName: item.shopName || '이름 없음'
           }
         })));
       }
@@ -57,19 +56,17 @@ export default function ListPage() {
         console.error('Error deleting menu:', error);
         alert('메뉴 삭제 중 오류가 발생했습니다.');
       } else {
-        // Remove the deleted menu from the state to update the UI
         setMenus(menus.filter(menu => menu.id !== menuId));
         alert('메뉴가 성공적으로 삭제되었습니다.');
       }
     }
   };
 
-
   return (
     <Container className="mt-5">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h1>저장된 메뉴 목록</h1>
-        <Button as={Link} to="/" variant="primary">새 메뉴 만들기</Button>
+        <Link to="/" className="btn btn-primary">새 메뉴 만들기</Link>
       </div>
 
       {loading && <div className="text-center"><Spinner animation="border" /></div>}
@@ -87,9 +84,9 @@ export default function ListPage() {
                   </small>
                 </div>
                 <div>
-                  <Button as={Link} to={`/?edit_id=${menu.id}`} variant="outline-secondary" className="me-2">
+                  <Link to={`/?edit_id=${menu.id}`} className="btn btn-outline-secondary me-2">
                     수정
-                  </Button>
+                  </Link>
                   <Button variant="outline-danger" onClick={() => handleDelete(menu.id)}>
                     삭제
                   </Button>
