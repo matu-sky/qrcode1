@@ -108,7 +108,7 @@ const MenuForm = ({ menuData, setMenuData }: any) => {
                 <Form.Group className="mb-3">
                     <div className="d-flex justify-content-between align-items-center">
                       <Form.Label>가게 설명 (선택 사항)</Form.Label>
-                      <Link to="/list">저장된 목록 보기</Link>
+                      <Link to="/list" className="btn btn-primary">메뉴 불러오기</Link>
                     </div>
                     <Form.Control 
                     as="textarea"
