@@ -129,7 +129,7 @@ export default function DisplayPage() {
                   <h1>{menuData.shopName}</h1>
                   {menuData.shopDescription && <p>{menuData.shopDescription}</p>}
               </header>
-              <div className="choice-buttons">
+              <div className="choice-buttons d-grid gap-2">
                   <Button variant="primary" size="lg" onClick={() => handlePriceSelection('dineIn')}>매장에서 먹고 갈래요</Button>
                   <Button variant="outline-primary" size="lg" onClick={() => handlePriceSelection('takeout')}>포장해서 갈래요</Button>
               </div>
