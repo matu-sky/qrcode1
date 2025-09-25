@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Button, Spinner } from 'react-bootstrap';
+import { Button, Spinner, Accordion } from 'react-bootstrap';
 import { supabase } from '../supabaseClient';
 import './DisplayPage.css'; // Import the CSS
 
@@ -149,22 +149,24 @@ export default function DisplayPage() {
             <p className="price-type-subtitle">({priceType === 'dineIn' ? '매장' : '포장'} 가격)</p>
           </header>
 
-          {menuData.categories.map((category: any, index: number) => (
-            <section key={index} className="menu-category">
-              <h2>{category.name}</h2>
-              <div className="menu-items-container">
-                {category.items.map((item: any, itemIndex: number) => (
-                  <div key={itemIndex} className="menu-item">
-                    <div className="item-info">
-                      <span className="item-name">{item.name}</span>
-                      {item.description && <span className="item-description">{item.description}</span>}
+          <Accordion defaultActiveKey="0" flush>
+            {menuData.categories.map((category: any, index: number) => (
+              <Accordion.Item eventKey={index.toString()} key={index}>
+                <Accordion.Header>{category.name}</Accordion.Header>
+                <Accordion.Body>
+                  {category.items.map((item: any, itemIndex: number) => (
+                    <div key={itemIndex} className="menu-item">
+                      <div className="item-info">
+                        <span className="item-name">{item.name}</span>
+                        {item.description && <span className="item-description">{item.description}</span>}
+                      </div>
+                      <span className="item-price">{priceType === 'dineIn' ? item.dineInPrice : item.takeoutPrice}</span>
                     </div>
-                    <span className="item-price">{priceType === 'dineIn' ? item.dineInPrice : item.takeoutPrice}</span>
-                  </div>
-                ))}
-              </div>
-            </section>
-          ))}
+                  ))}
+                </Accordion.Body>
+              </Accordion.Item>
+            ))}
+          </Accordion>
         </div>
       );
     }
