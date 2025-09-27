@@ -149,7 +149,7 @@ export default function DisplayPage() {
             <p className="price-type-subtitle">({priceType === 'dineIn' ? '매장' : '포장'} 가격)</p>
           </header>
 
-          <Accordion defaultActiveKey="0" flush>
+          <Accordion flush>
             {menuData.categories.map((category: any, index: number) => (
               <Accordion.Item eventKey={index.toString()} key={index}>
                 <Accordion.Header>{category.name}</Accordion.Header>
