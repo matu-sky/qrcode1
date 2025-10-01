@@ -31,7 +31,7 @@ export default function AppNavbar() {
                 <Button variant="outline-secondary" onClick={handleLogout}>Logout</Button>
               </>
             ) : (
-              <Button as={Link} to="/auth">Login</Button>
+              <Link to="/auth"><Button>Login</Button></Link>
             )}
           </Nav>
         </Navbar.Collapse>
