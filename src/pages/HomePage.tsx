@@ -4,6 +4,8 @@ import { Container, Row, Col, Tabs, Tab, Form, Button, Card, InputGroup, Image }
 import { QRCodeCanvas as QRCode } from 'qrcode.react';
 import { toPng } from 'html-to-image';
 import { supabase } from '../supabaseClient';
+import { useAuth } from '../contexts/AuthContext';
+import AppNavbar from '../components/Navbar';
 
 // Reusable Memo Customizer Component
 const MemoCustomizer = ({ memo, setMemo, color, setColor, size, setSize }: any) => (
@@ -47,6 +49,7 @@ const TemplateSelector = ({ selected, onChange }: { selected: string, onChange: 
 );
 
 const MenuForm = ({ menuData, setMenuData }: any) => {
+  const { session } = useAuth();
   
   const handleShopInfoChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -108,7 +111,7 @@ const MenuForm = ({ menuData, setMenuData }: any) => {
                 <Form.Group className="mb-3">
                     <div className="d-flex justify-content-between align-items-center">
                       <Form.Label>가게 설명 (선택 사항)</Form.Label>
-                      <Link to="/list" className="btn btn-primary">메뉴 불러오기</Link>
+                      {session && <Link to="/list" className="btn btn-primary">메뉴 불러오기</Link>}
                     </div>
                     <Form.Control 
                     as="textarea"
@@ -173,6 +176,7 @@ const MenuForm = ({ menuData, setMenuData }: any) => {
 };
 
 export default function HomePage() {
+  const { session } = useAuth();
   const [activeTab, setActiveTab] = useState('url');
   const [finalQrValue, setFinalQrValue] = useState('');
   const qrRef = useRef<any>(null);
@@ -212,13 +216,13 @@ export default function HomePage() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const editIdParam = params.get('edit_id');
-    if (editIdParam) {
+    if (editIdParam && session) {
       setEditId(editIdParam);
       setActiveTab('menu');
       const fetchMenu = async () => {
         const { data, error } = await supabase
           .from('menus')
-          .select('data')
+          .select('data, user_id')
           .eq('id', editIdParam)
           .single();
         
@@ -226,12 +230,18 @@ export default function HomePage() {
           console.error('Error fetching menu:', error);
           alert('메뉴 정보를 불러오는 데 실패했습니다.');
         } else if (data) {
-          setMenuData(data.data);
+          if (data.user_id !== session.user.id) {
+            alert('이 메뉴를 수정할 권한이 없습니다.');
+            setEditId(null);
+            setActiveTab('url');
+          } else {
+            setMenuData(data.data);
+          }
         }
       };
       fetchMenu();
     }
-  }, []);
+  }, [session]);
 
   const handleVCardChange = (e: any) => {
     const { name, value } = e.target;
@@ -316,6 +326,11 @@ export default function HomePage() {
         break;
       }
       case 'menu': {
+        if (!session) {
+          alert('메뉴를 저장하려면 로그인이 필요합니다.');
+          return;
+        }
+
         const filteredMenuData = {
           ...menuData,
           categories: menuData.categories
@@ -336,7 +351,8 @@ export default function HomePage() {
           const { error } = await supabase
             .from('menus')
             .update({ data: filteredMenuData })
-            .eq('id', editId);
+            .eq('id', editId)
+            .eq('user_id', session.user.id); // Ensure user can only update their own menu
 
           if (error) {
             console.error('Error updating menu data:', error);
@@ -353,7 +369,7 @@ export default function HomePage() {
           const { data, error } = await supabase
             .from('menus')
             .insert([
-              { data: filteredMenuData },
+              { data: filteredMenuData, user_id: session.user.id },
             ])
             .select();
 
@@ -377,7 +393,9 @@ export default function HomePage() {
   };
 
   return (
-    <Container className="main-container">
+    <>
+      <AppNavbar />
+      <Container className="main-container">
       <Row>
         <Col><h1 className="text-center main-header">QR 코드 생성기</h1></Col>
       </Row>
@@ -399,6 +417,7 @@ export default function HomePage() {
                 <Button variant="primary" type="submit" className="mt-4 w-100">QR 코드 생성</Button>
               </Form>
             </Tab>
+            {session && 
             <Tab eventKey="menu" title="메뉴">
               <Form onSubmit={handleGenerate}>
                 <MenuForm menuData={menuData} setMenuData={setMenuData} />
@@ -407,7 +426,7 @@ export default function HomePage() {
                     <Button variant="primary" type="submit" className="mt-4 w-100">{editId ? '메뉴 수정' : 'QR 코드 생성'}</Button>
                 </div>
               </Form>
-            </Tab>
+            </Tab>}
             <Tab eventKey="sms" title="SMS">
               <Form onSubmit={handleGenerate} className="p-2">
                 <Form.Group className="mb-2"><Form.Label>전화번호</Form.Label><Form.Control type="tel" placeholder="010-1234-5678" value={sms.phone} onChange={(e) => setSms({...sms, phone: e.target.value})} /></Form.Group>
@@ -474,5 +493,6 @@ export default function HomePage() {
         </Col>
       </Row>
     </Container>
+    </>
   );
 }
