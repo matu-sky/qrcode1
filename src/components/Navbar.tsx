@@ -15,9 +15,9 @@ export default function AppNavbar() {
   };
 
   return (
-    <Navbar bg="light" expand="lg" className="mb-4">
+    <Navbar bg="white" expand="lg" className="mb-4 border-bottom">
       <Container>
-        <Navbar.Brand as={Link} to="/">QR Code Generator</Navbar.Brand>
+        <Navbar.Brand as={Link} to="/" className="text-primary fw-bold">QR Code Generator</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
