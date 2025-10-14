@@ -21,8 +21,9 @@ export default function AppNavbar() {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link as={Link} to="/">Home</Nav.Link>
-            {session && <Nav.Link as={Link} to="/list">My Menus</Nav.Link>}
+            <Nav.Link as={Link} to="/">QR 생성</Nav.Link>
+            <Nav.Link as={Link} to="/menu">메뉴판 생성</Nav.Link>
+            {session && <Nav.Link as={Link} to="/list">내 메뉴</Nav.Link>}
           </Nav>
           <Nav>
             {session ? (
