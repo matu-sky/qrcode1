@@ -1,0 +1,139 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>송금 정보 미리보기</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
+        body {
+            margin: 0;
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            width: 100%;
+            max-width: 480px;
+            background-color: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header-image {
+            height: 150px;
+            background-image: url('https://images.pexels.com/photos/1287145/pexels-photo-1287145.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260');
+            background-size: cover;
+            background-position: center;
+        }
+        .content {
+            padding: 24px;
+            text-align: center;
+        }
+        .account-info h2 {
+            font-size: 16px;
+            color: #888;
+            margin: 0 0 4px 0;
+            font-weight: 500;
+        }
+        .account-info p {
+            font-size: 24px;
+            color: #333;
+            margin: 0 0 24px 0;
+            font-weight: 700;
+        }
+        .copy-button {
+            width: 100%;
+            padding: 14px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 32px;
+        }
+        .divider {
+            font-size: 14px;
+            color: #aaa;
+            margin-bottom: 16px;
+        }
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 16px;
+        }
+        .app-link {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #555;
+            font-size: 14px;
+        }
+        .app-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 12px;
+            font-weight: bold;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-image"></div>
+        <div class="content">
+            <div class="account-info">
+                <h2>예금주</h2>
+                <p>홍길동</p>
+                <h2>계좌번호</h2>
+                <p>신한은행 110-123-456789</p>
+            </div>
+            <button class="copy-button">계좌번호 복사하기</button>
+
+            <div class="divider">아래 앱으로 바로 송금하기</div>
+
+            <div class="app-grid">
+                <a href="toss://" class="app-link">
+                    <div class="app-icon">토스</div>
+                    <span>토스</span>
+                </a>
+                <a href="kakaobank://" class="app-link">
+                    <div class="app-icon">카카오뱅크</div>
+                    <span>카카오뱅크</span>
+                </a>
+                <a href="newnhsmartbanking://" class="app-link">
+                    <div class="app-icon">NH농협</div>
+                    <span>NH농협</span>
+                </a>
+                <a href="ibk-one-bank://" class="app-link">
+                    <div class="app-icon">IBK기업</div>
+                    <span>IBK기업</span>
+                </a>
+                 <a href="#" class="app-link">
+                    <div class="app-icon">우리은행</div>
+                    <span>우리은행</span>
+                </a>
+                 <a href="#" class="app-link">
+                    <div class="app-icon">하나은행</div>
+                    <span>하나은행</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
