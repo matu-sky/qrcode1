@@ -37,6 +37,41 @@ const bankApps = [
     logo: 'https://logo.clearbit.com/hanabank.com',
     scheme: 'hanawonq://' // Common guess
   },
+  {
+    name: 'NH콕뱅크',
+    logo: null,
+    scheme: '#'
+  },
+  {
+    name: '신한 SOL',
+    logo: null,
+    scheme: 'shinhan-s-banking://'
+  },
+  {
+    name: 'KB스타뱅킹',
+    logo: null,
+    scheme: 'kbbank://'
+  },
+  {
+    name: '씨티모바일',
+    logo: null,
+    scheme: 'citimobileapp://'
+  },
+  {
+    name: 'DGB대구은행',
+    logo: null,
+    scheme: 'mbanking://'
+  },
+  {
+    name: '수협',
+    logo: null,
+    scheme: '#'
+  },
+  {
+    name: '신협 ON',
+    logo: null,
+    scheme: 'cu-bankpay://'
+  },
 ];
 
 export default function DisplayPage() {
