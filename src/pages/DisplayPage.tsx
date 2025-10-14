@@ -19,18 +19,33 @@ const bankApps = [
   },
   {
     name: 'NH농협',
-    logo: 'https://www.nhbank.com/nh/images/common/logo_nh.png',
+    logo: 'https://logo.clearbit.com/nhbank.com',
     scheme: 'newnhsmartbanking://'
   },
   {
-    name: 'IBK기업',
-    logo: 'https://www.ibk.co.kr/img/logo/logo_ibk.png',
-    scheme: 'ibk-one-bank://'
+    name: 'NH콕뱅크',
+    logo: 'https://logo.clearbit.com/nhbank.com',
+    scheme: '#'
+  },
+  {
+    name: '신한 SOL',
+    logo: 'https://logo.clearbit.com/shinhan.com',
+    scheme: 'shinhan-s-banking://'
+  },
+  {
+    name: 'KB스타뱅킹',
+    logo: 'https://logo.clearbit.com/kbfg.com',
+    scheme: 'kbbank://'
   },
   {
     name: '우리은행',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/%EC%9A%B0%EB%A6%AC%EC%9D%80%ED%96%89_%EB%A1%9C%EA%B3%A0.svg/2560px-%EC%9A%B0%EB%A6%AC%EC%9D%80%ED%96%89_%EB%A1%9C%EA%B3%A0.svg.png',
+    logo: 'https://logo.clearbit.com/wooribank.com',
     scheme: 'wooriwon://' // Common guess
+  },
+  {
+    name: 'IBK기업',
+    logo: 'https://logo.clearbit.com/ibk.co.kr',
+    scheme: 'ibk-one-bank://'
   },
   {
     name: '하나은행',
@@ -38,38 +53,23 @@ const bankApps = [
     scheme: 'hanawonq://' // Common guess
   },
   {
-    name: 'NH콕뱅크',
-    logo: null,
-    scheme: '#'
-  },
-  {
-    name: '신한 SOL',
-    logo: null,
-    scheme: 'shinhan-s-banking://'
-  },
-  {
-    name: 'KB스타뱅킹',
-    logo: null,
-    scheme: 'kbbank://'
-  },
-  {
     name: '씨티모바일',
-    logo: null,
+    logo: 'https://logo.clearbit.com/citibank.co.kr',
     scheme: 'citimobileapp://'
   },
   {
     name: 'DGB대구은행',
-    logo: null,
+    logo: 'https://logo.clearbit.com/dgb.co.kr',
     scheme: 'mbanking://'
   },
   {
     name: '수협',
-    logo: null,
+    logo: 'https://logo.clearbit.com/suhyup-bank.com',
     scheme: '#'
   },
   {
     name: '신협 ON',
-    logo: null,
+    logo: 'https://logo.clearbit.com/cu.co.kr',
     scheme: 'cu-bankpay://'
   },
 ];
