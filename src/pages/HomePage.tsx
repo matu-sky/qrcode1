@@ -1,21 +1,18 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Container, Row, Col, Tabs, Tab, Form, Button, Card, InputGroup, Image } from 'react-bootstrap';
+import React, { useState, useRef } from 'react';
+import { Container, Row, Col, Tabs, Tab, Form, Button } from 'react-bootstrap';
 import { QRCodeCanvas as QRCode } from 'qrcode.react';
 import { toPng } from 'html-to-image';
-import { supabase } from '../supabaseClient';
-import { useAuth } from '../contexts/AuthContext';
 import AppNavbar from '../components/Navbar';
 
 // Reusable Memo Customizer Component
 const MemoCustomizer = ({ memo, setMemo, color, setColor, size, setSize }: any) => (
   <Form.Group className="mt-3 p-3 border rounded bg-light">
     <Form.Label className="fw-bold">QR 코드 메모 꾸미기 (선택 사항)</Form.Label>
-    <Form.Control 
-      type="text" 
-      placeholder="예: 내 명함, 회사 와이파이" 
-      value={memo} 
-      onChange={(e) => setMemo(e.target.value)} 
+    <Form.Control
+      type="text"
+      placeholder="예: 내 명함, 회사 와이파이"
+      value={memo}
+      onChange={(e) => setMemo(e.target.value)}
       className="mb-2"
     />
     <Row>
@@ -48,135 +45,8 @@ const TemplateSelector = ({ selected, onChange }: { selected: string, onChange: 
   </Form.Group>
 );
 
-const MenuForm = ({ menuData, setMenuData }: any) => {
-  const { session } = useAuth();
-  
-  const handleShopInfoChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setMenuData({ ...menuData, [name]: value });
-  };
-
-  const handleCategoryChange = (catIndex: number, value: string) => {
-    const newCategories = [...menuData.categories];
-    newCategories[catIndex].name = value;
-    setMenuData({ ...menuData, categories: newCategories });
-  };
-
-  const handleItemChange = (catIndex: number, itemIndex: number, e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    const newCategories = [...menuData.categories];
-    newCategories[catIndex].items[itemIndex] = { ...newCategories[catIndex].items[itemIndex], [name]: value };
-    setMenuData({ ...menuData, categories: newCategories });
-  };
-
-  const addCategory = () => {
-    setMenuData({
-      ...menuData,
-      categories: [...menuData.categories, { name: '', items: [{ name: '', dineInPrice: '', takeoutPrice: '', description: '' }] }]
-    });
-  };
-
-  const removeCategory = (catIndex: number) => {
-    const newCategories = [...menuData.categories];
-    newCategories.splice(catIndex, 1);
-    setMenuData({ ...menuData, categories: newCategories });
-  };
-
-  const addItem = (catIndex: number) => {
-    const newCategories = [...menuData.categories];
-    newCategories[catIndex].items.push({ name: '', dineInPrice: '', takeoutPrice: '', description: '' });
-    setMenuData({ ...menuData, categories: newCategories });
-  };
-
-  const removeItem = (catIndex: number, itemIndex: number) => {
-    const newCategories = [...menuData.categories];
-    newCategories[catIndex].items.splice(itemIndex, 1);
-    setMenuData({ ...menuData, categories: newCategories });
-  };
-
-  return (
-    <div className="p-2">
-        <Row>
-            <Col md={8}>
-                <Form.Group className="mb-3">
-                    <Form.Label>가게 이름</Form.Label>
-                    <Form.Control 
-                    type="text" 
-                    name="shopName"
-                    placeholder="예: Gemini's Coffee" 
-                    value={menuData.shopName} 
-                    onChange={handleShopInfoChange} 
-                    />
-                </Form.Group>
-                <Form.Group className="mb-3">
-                    <div className="d-flex justify-content-between align-items-center">
-                      <Form.Label>가게 설명 (선택 사항)</Form.Label>
-                      {session && <Link to="/list" className="btn btn-primary">메뉴 불러오기</Link>}
-                    </div>
-                    <Form.Control 
-                    as="textarea"
-                    rows={2}
-                    name="shopDescription"
-                    placeholder="손님들께 전하고 싶은 말을 적어보세요." 
-                    value={menuData.shopDescription} 
-                    onChange={handleShopInfoChange} 
-                    />
-                </Form.Group>
-            </Col>
-            <Col md={4}>
-                <Form.Group className="mb-3">
-                    <Form.Label>로고 이미지 주소 (URL)</Form.Label>
-                    <Form.Control type="url" name="shopLogoUrl" placeholder="https://example.com/logo.png" value={menuData.shopLogoUrl} onChange={handleShopInfoChange} />
-                    {menuData.shopLogoUrl && <Image src={menuData.shopLogoUrl} thumbnail className="mt-2" style={{ maxHeight: '100px' }}/>}
-                </Form.Group>
-            </Col>
-        </Row>
-
-      {menuData.categories.map((category: any, catIndex: number) => (
-        <Card key={catIndex} className="mb-4">
-          <Card.Header>
-            <InputGroup>
-              <InputGroup.Text>카테고리</InputGroup.Text>
-              <Form.Control 
-                type="text" 
-                placeholder="예: 커피, 에이드" 
-                value={category.name} 
-                onChange={(e) => handleCategoryChange(catIndex, e.target.value)}
-              />
-              <Button variant="outline-danger" onClick={() => removeCategory(catIndex)}>X</Button>
-            </InputGroup>
-          </Card.Header>
-          <Card.Body>
-            {category.items.map((item: any, itemIndex: number) => (
-              <Row key={itemIndex} className="mb-3 align-items-center">
-                <Col xs={12} md={3} className="mb-2 mb-md-0">
-                  <Form.Control name="name" placeholder="메뉴 이름" value={item.name} onChange={(e) => handleItemChange(catIndex, itemIndex, e)} />
-                </Col>
-                <Col xs={6} md={2}>
-                  <Form.Control name="dineInPrice" placeholder="매장 가격" value={item.dineInPrice} onChange={(e) => handleItemChange(catIndex, itemIndex, e)} />
-                </Col>
-                <Col xs={6} md={2}>
-                  <Form.Control name="takeoutPrice" placeholder="포장 가격" value={item.takeoutPrice} onChange={(e) => handleItemChange(catIndex, itemIndex, e)} />
-                </Col>
-                <Col xs={12} md={4} className="mb-2 mb-md-0">
-                  <Form.Control name="description" placeholder="설명 (선택)" value={item.description} onChange={(e) => handleItemChange(catIndex, itemIndex, e)} />
-                </Col>
-                <Col xs={12} md={1} className="text-end">
-                  <Button variant="outline-secondary" size="sm" onClick={() => removeItem(catIndex, itemIndex)}>–</Button>
-                </Col>
-              </Row>
-            ))}
-            <Button variant="secondary" onClick={() => addItem(catIndex)}>+ 메뉴 항목 추가</Button>
-          </Card.Body>
-        </Card>
-      ))}
-      <Button variant="primary" onClick={addCategory} className="w-100 mb-4">+ 카테고리 추가</Button>
-    </div>
-  );
-};
 
 export default function HomePage() {
-  const { session } = useAuth();
   const [activeTab, setActiveTab] = useState('url');
   const [finalQrValue, setFinalQrValue] = useState('');
   const qrRef = useRef<any>(null);
@@ -184,64 +54,27 @@ export default function HomePage() {
   // Form states
   const [url, setUrl] = useState('');
   const [text, setText] = useState('');
-  const [vCard, setVCard] = useState({ 
-    name: '', 
-    title: '', 
-    org: '', 
+  const [vCard, setVCard] = useState({
+    name: '',
+    title: '',
+    org: '',
     phone: '', // Mobile
     workPhone: '', // Work
-    fax: '', 
-    email: '', 
+    fax: '',
+    email: '',
     website: '',
-    address: '' 
+    address: ''
   });
   const [wifi, setWifi] = useState({ ssid: '', password: '', encryption: 'WPA' });
   const [payment, setPayment] = useState({ bank: '', accountNumber: '', accountHolder: '', amount: '' });
   const [sms, setSms] = useState({ phone: '', message: '' });
   const [template, setTemplate] = useState('memo');
-  const [menuData, setMenuData] = useState({
-    shopName: '',
-    shopDescription: '',
-    shopLogoUrl: '',
-    categories: [{ name: '커피', items: [{ name: '아메리카노', dineInPrice: '5,000원', takeoutPrice: '4,500원', description: '신선한 원두의 깊은 풍미' }] }]
-  });
-  
+
   // Memo states
   const [memo, setMemo] = useState('');
   const [memoColor, setMemoColor] = useState('#000000');
   const [memoSize, setMemoSize] = useState('1.25rem');
   const [displayMemo, setDisplayMemo] = useState({ text: '', color: '', size: '' });
-  const [editId, setEditId] = useState<string | null>(null);
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const editIdParam = params.get('edit_id');
-    if (editIdParam && session) {
-      setEditId(editIdParam);
-      setActiveTab('menu');
-      const fetchMenu = async () => {
-        const { data, error } = await supabase
-          .from('menus')
-          .select('data, user_id')
-          .eq('id', editIdParam)
-          .single();
-        
-        if (error) {
-          console.error('Error fetching menu:', error);
-          alert('메뉴 정보를 불러오는 데 실패했습니다.');
-        } else if (data) {
-          if (data.user_id !== session.user.id) {
-            alert('이 메뉴를 수정할 권한이 없습니다.');
-            setEditId(null);
-            setActiveTab('url');
-          } else {
-            setMenuData(data.data);
-          }
-        }
-      };
-      fetchMenu();
-    }
-  }, [session]);
 
   const handleVCardChange = (e: any) => {
     const { name, value } = e.target;
@@ -325,68 +158,6 @@ export default function HomePage() {
         setFinalQrValue(`SMSTO:${sms.phone}:${sms.message}`);
         break;
       }
-      case 'menu': {
-        if (!session) {
-          alert('메뉴를 저장하려면 로그인이 필요합니다.');
-          return;
-        }
-
-        const filteredMenuData = {
-          ...menuData,
-          categories: menuData.categories
-            .map(cat => ({
-              ...cat,
-              items: cat.items.filter(item => item.name.trim() !== '')
-            }))
-            .filter(cat => cat.name.trim() !== '' && cat.items.length > 0)
-        };
-        if (filteredMenuData.shopName.trim() === '' || filteredMenuData.categories.length === 0) {
-            alert('가게 이름과 하나 이상의 메뉴 항목을 입력해주세요.');
-            return;
-        };
-        
-        // Save or Update in Supabase
-        if (editId) {
-          // Update existing menu
-          const { error } = await supabase
-            .from('menus')
-            .update({ data: filteredMenuData })
-            .eq('id', editId)
-            .eq('user_id', session.user.id); // Ensure user can only update their own menu
-
-          if (error) {
-            console.error('Error updating menu data:', error);
-            alert('메뉴 수정 중 오류가 발생했습니다.');
-            return;
-          }
-
-          alert('메뉴가 성공적으로 수정되었습니다.');
-          const params = new URLSearchParams({ type: 'menu', id: editId });
-          setFinalQrValue(`${displayUrl}?${params.toString()}`);
-
-        } else {
-          // Create new menu
-          const { data, error } = await supabase
-            .from('menus')
-            .insert([
-              { data: filteredMenuData, user_id: session.user.id },
-            ])
-            .select();
-
-          if (error) {
-            console.error('Error inserting menu data:', error);
-            alert('메뉴 저장 중 오류가 발생했습니다.');
-            return;
-          }
-
-          if (data) {
-            const menuId = data[0].id;
-            const params = new URLSearchParams({ type: 'menu', id: menuId });
-            setFinalQrValue(`${displayUrl}?${params.toString()}`);
-          }
-        }
-        break;
-      }
       default:
         setFinalQrValue('');
     }
@@ -417,16 +188,6 @@ export default function HomePage() {
                 <Button variant="primary" type="submit" className="mt-4 w-100">QR 코드 생성</Button>
               </Form>
             </Tab>
-            {session && 
-            <Tab eventKey="menu" title="메뉴">
-              <Form onSubmit={handleGenerate}>
-                <MenuForm menuData={menuData} setMenuData={setMenuData} />
-                <div className="p-2">
-                    <MemoCustomizer memo={memo} setMemo={setMemo} color={memoColor} setColor={setMemoColor} size={memoSize} setSize={setMemoSize} />
-                    <Button variant="primary" type="submit" className="mt-4 w-100">{editId ? '메뉴 수정' : 'QR 코드 생성'}</Button>
-                </div>
-              </Form>
-            </Tab>}
             <Tab eventKey="sms" title="SMS">
               <Form onSubmit={handleGenerate} className="p-2">
                 <Form.Group className="mb-2"><Form.Label>전화번호</Form.Label><Form.Control type="tel" placeholder="010-1234-5678" value={sms.phone} onChange={(e) => setSms({...sms, phone: e.target.value})} /></Form.Group>
@@ -476,8 +237,8 @@ export default function HomePage() {
           <div className="qr-code-container d-flex justify-content-center align-items-center">
             <div className="text-center">
               <h4 className="mb-3">생성된 QR 코드</h4>
-              {finalQrValue ? 
-                <> 
+              {finalQrValue ?
+                <>
                   <div ref={qrRef} className="qr-code-wrapper p-3 d-inline-block bg-white">
                     {displayMemo.text && <p className="qr-memo mb-2" style={{ color: displayMemo.color, fontSize: displayMemo.size }}>{displayMemo.text}</p>}
                     <QRCode value={finalQrValue} size={256} />
@@ -485,7 +246,7 @@ export default function HomePage() {
                   <br />
                   <Button variant="secondary" onClick={handleDownload} className="mt-3">다운로드</Button>
                 </>
-                : 
+                :
                 <p className="qr-code-placeholder">내용 입력 후 'QR 코드 생성' 버튼을 눌러주세요.</p>
               }
             </div>
