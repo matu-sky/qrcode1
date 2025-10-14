@@ -1,8 +1,43 @@
+
+
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Button, Spinner, Accordion } from 'react-bootstrap';
 import { supabase } from '../supabaseClient';
 import './DisplayPage.css'; // Import the CSS
+
+const bankApps = [
+  {
+    name: '토스',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/4/44/Toss-logo.svg',
+    scheme: 'supertoss://'
+  },
+  {
+    name: '카카오뱅크',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/b/b0/KakaoBank_logo.svg',
+    scheme: 'kakaobank://'
+  },
+  {
+    name: 'NH농협',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/NACF_%28NongHyup%29_Logo_with_wordmark.svg/1024px-NACF_%28NongHyup%29_Logo_with_wordmark.svg.png',
+    scheme: 'newnhsmartbanking://'
+  },
+  {
+    name: 'IBK기업',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/2/2a/Industrial_Bank_of_Korea_Logo.svg',
+    scheme: 'ibk-one-bank://'
+  },
+  {
+    name: '우리은행',
+    logo: null, // Placeholder
+    scheme: 'wooriwon://' // Common guess
+  },
+  {
+    name: '하나은행',
+    logo: null, // Placeholder
+    scheme: 'hanawonq://' // Common guess
+  },
+];
 
 export default function DisplayPage() {
   const [searchParams] = useSearchParams();
@@ -26,6 +61,7 @@ export default function DisplayPage() {
   const bank = searchParams.get('bank');
   const accountNumber = searchParams.get('accountNumber');
   const accountHolder = searchParams.get('accountHolder');
+  const backgroundUrl = searchParams.get('bg');
 
   // vCard data
   const vCardData = {
@@ -109,6 +145,42 @@ export default function DisplayPage() {
     setView('menu');
   }
 
+  const renderWebPaymentPage = () => {
+    const fullAccountNumber = `${bank} ${accountNumber}`;
+    return (
+        <div className="web-payment">
+            <div 
+                className="header-image" 
+                style={{ backgroundImage: `url(${backgroundUrl || 'https://images.pexels.com/photos/3184454/pexels-photo-3184454.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'})` }}
+            ></div>
+            <div className="content">
+                <div className="account-info">
+                    <h2>예금주</h2>
+                    <p className="bank-name">{accountHolder}</p>
+                    <h2>계좌번호</h2>
+                    <p className="account-number">{fullAccountNumber}</p>
+                </div>
+                <button className="copy-button" onClick={() => handleCopy(fullAccountNumber)}>
+                    {copied ? '복사 완료!' : '계좌번호 복사하기'}
+                </button>
+
+                <div className="divider">앱으로 송금하기</div>
+
+                <div className="app-grid">
+                    {bankApps.map(app => (
+                        <a href={app.scheme} className="app-link" key={app.name}>
+                            <div className="app-icon">
+                                {app.logo ? <img src={app.logo} alt={app.name} /> : <strong>{app.name}</strong>}
+                            </div>
+                            <span>{app.name}</span>
+                        </a>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+  }
+
   const renderContent = () => {
     if (loading) {
       return <div className="text-center p-5"><Spinner animation="border" /></div>;
@@ -116,6 +188,10 @@ export default function DisplayPage() {
 
     if (error) {
       return <div className="text-center p-5 text-danger">{error}</div>;
+    }
+
+    if (type === 'payment' && template === 'web-payment') {
+        return renderWebPaymentPage();
     }
 
     if (type === 'menu') {
@@ -130,8 +206,8 @@ export default function DisplayPage() {
                   {menuData.shopDescription && <p>{menuData.shopDescription}</p>}
               </header>
               <div className="choice-buttons d-grid gap-2">
-                  <Button variant="primary" size="lg" onClick={() => handlePriceSelection('dineIn')}>매장에서 먹고 갈래요</Button>
-                  <Button variant="outline-primary" size="lg" onClick={() => handlePriceSelection('takeout')}>포장해서 갈래요</Button>
+                  <Button style={{borderRadius: 0}} variant="primary" size="lg" onClick={() => handlePriceSelection('dineIn')}>매장에서 먹고 갈래요</Button>
+                  <Button style={{borderRadius: 0}} variant="outline-primary" size="lg" onClick={() => handlePriceSelection('takeout')}>포장해서 갈래요</Button>
               </div>
           </div>
         );
@@ -141,12 +217,14 @@ export default function DisplayPage() {
       return (
         <div className="menu-content">
           <header className="menu-header menu-view-header">
-            <button onClick={() => setView('welcome')} className="back-link-btn">← 뒤로가기</button>
+            <button onClick={() => setView('welcome')} className="back-link-btn" style={{borderRadius: 0}}>← 뒤로가기</button>
             <div className="header-center-content">
               {menuData.shopLogoUrl && <img src={menuData.shopLogoUrl} alt={`${menuData.shopName} Logo`} className="shop-logo small" />} 
               <h1>{menuData.shopName}</h1>
             </div>
-            <p className="price-type-subtitle">({priceType === 'dineIn' ? '매장' : '포장'} 가격)</p>
+            <p className="price-type-subtitle" style={{borderRadius: 0}}>({
+              priceType === 'dineIn' ? '매장' : '포장'
+            } 가격)</p>
           </header>
 
           <Accordion flush>
@@ -185,7 +263,7 @@ export default function DisplayPage() {
           {vCardData.website && <div className="contact-item"><span className="icon">🌐</span> <span><a href={vCardData.website} target="_blank" rel="noopener noreferrer">{vCardData.website}</a></span></div>}
           {vCardData.address && <div className="contact-item"><span className="icon">📍</span> <span>{vCardData.address}</span></div>}
 
-          <Button variant="primary" onClick={handleSaveVCard} className="w-100 mt-4">연락처 저장</Button>
+          <Button style={{borderRadius: 0}} variant="primary" onClick={handleSaveVCard} className="w-100 mt-4">연락처 저장</Button>
         </>
       );
     }
@@ -206,7 +284,7 @@ export default function DisplayPage() {
             <div className="item-vertical full-width">
               <span className="label">계좌번호</span>
               <span className="value account-number">{accountNumber}</span>
-              <Button size="sm" variant={copied ? "success" : "primary"} onClick={() => handleCopy(accountNumber)} className="copy-btn-full">
+              <Button style={{borderRadius: 0}} size="sm" variant={copied ? "success" : "primary"} onClick={() => handleCopy(accountNumber)} className="copy-btn-full">
                 {copied ? '계좌번호 복사됨!' : '계좌번호 복사'}
               </Button>
             </div>
@@ -220,6 +298,7 @@ export default function DisplayPage() {
   };
 
   const getContainerClass = () => {
+    if (type === 'payment' && template === 'web-payment') return 'web-payment-container';
     if (type === 'vcard') return 'business-card';
     if (type === 'menu') return 'menu-template';
     return template;

@@ -37,6 +37,7 @@ const TemplateSelector = ({ selected, onChange }: { selected: string, onChange: 
   <Form.Group className="mt-4">
     <Form.Label>표시 템플릿 선택</Form.Label>
     <div className="d-flex flex-wrap gap-3">
+      <Form.Check type="radio" label="웹 페이지" name="template" value="web-payment" checked={selected === 'web-payment'} onChange={(e) => onChange(e.target.value)} />
       <Form.Check type="radio" label="계좌 정보" name="template" value="bank-info-card" checked={selected === 'bank-info-card'} onChange={(e) => onChange(e.target.value)} />
       <Form.Check type="radio" label="메모" name="template" value="memo" checked={selected === 'memo'} onChange={(e) => onChange(e.target.value)} />
       <Form.Check type="radio" label="포스트잇" name="template" value="sticky-note" checked={selected === 'sticky-note'} onChange={(e) => onChange(e.target.value)} />
@@ -69,6 +70,7 @@ export default function HomePage() {
   const [payment, setPayment] = useState({ bank: '', accountNumber: '', accountHolder: '', amount: '' });
   const [sms, setSms] = useState({ phone: '', message: '' });
   const [template, setTemplate] = useState('memo');
+  const [backgroundUrl, setBackgroundUrl] = useState('');
 
   // Memo states
   const [memo, setMemo] = useState('');
@@ -90,7 +92,7 @@ export default function HomePage() {
     setMemoColor('#000000');
     setMemoSize('1.25rem');
     if (newTab === 'payment') {
-      setTemplate('bank-info-card');
+      setTemplate('web-payment');
     } else {
       setTemplate('memo');
     }
@@ -150,6 +152,9 @@ export default function HomePage() {
         const params = new URLSearchParams({ type: 'payment', template, bank: payment.bank, accountNumber: payment.accountNumber });
         if (payment.accountHolder) params.set('accountHolder', payment.accountHolder);
         if (payment.amount) params.set('amount', payment.amount);
+        if (template === 'web-payment' && backgroundUrl) {
+          params.set('bg', backgroundUrl);
+        }
         setFinalQrValue(`${displayUrl}?${params.toString()}`);
         break;
       }
@@ -177,7 +182,7 @@ export default function HomePage() {
               <Form onSubmit={handleGenerate} className="p-2">
                 <Form.Group controlId="formUrl"><Form.Label>웹사이트 URL</Form.Label><Form.Control type="text" placeholder="https://example.com" value={url} onChange={(e) => setUrl(e.target.value)} /></Form.Group>
                 <MemoCustomizer memo={memo} setMemo={setMemo} color={memoColor} setColor={setMemoColor} size={memoSize} setSize={setMemoSize} />
-                <Button variant="primary" type="submit" className="mt-4 w-100">QR 코드 생성</Button>
+                <Button style={{borderRadius: 0}} variant="primary" type="submit" className="mt-4 w-100">QR 코드 생성</Button>
               </Form>
             </Tab>
             <Tab eventKey="text" title="텍스트">
@@ -185,7 +190,7 @@ export default function HomePage() {
                 <Form.Group controlId="formText"><Form.Label>내용</Form.Label><Form.Control as="textarea" rows={3} placeholder="QR 코드로 만들 텍스트를 입력하세요." value={text} onChange={(e) => setText(e.target.value)} /></Form.Group>
                 <TemplateSelector selected={template} onChange={setTemplate} />
                 <MemoCustomizer memo={memo} setMemo={setMemo} color={memoColor} setColor={setMemoColor} size={memoSize} setSize={setMemoSize} />
-                <Button variant="primary" type="submit" className="mt-4 w-100">QR 코드 생성</Button>
+                <Button style={{borderRadius: 0}} variant="primary" type="submit" className="mt-4 w-100">QR 코드 생성</Button>
               </Form>
             </Tab>
             <Tab eventKey="sms" title="SMS">
@@ -193,7 +198,7 @@ export default function HomePage() {
                 <Form.Group className="mb-2"><Form.Label>전화번호</Form.Label><Form.Control type="tel" placeholder="010-1234-5678" value={sms.phone} onChange={(e) => setSms({...sms, phone: e.target.value})} /></Form.Group>
                 <Form.Group className="mb-2"><Form.Label>메시지 내용</Form.Label><Form.Control as="textarea" rows={3} placeholder="보낼 메시지를 입력하세요." value={sms.message} onChange={(e) => setSms({...sms, message: e.target.value})} /></Form.Group>
                 <MemoCustomizer memo={memo} setMemo={setMemo} color={memoColor} setColor={setMemoColor} size={memoSize} setSize={setMemoSize} />
-                <Button variant="primary" type="submit" className="mt-4 w-100">QR 코드 생성</Button>
+                <Button style={{borderRadius: 0}} variant="primary" type="submit" className="mt-4 w-100">QR 코드 생성</Button>
               </Form>
             </Tab>
             <Tab eventKey="vcard" title="명함">
@@ -208,7 +213,7 @@ export default function HomePage() {
                 <Form.Group className="mb-2"><Form.Label>홈페이지</Form.Label><Form.Control type="text" name="website" placeholder="https://example.com" value={vCard.website} onChange={handleVCardChange} /></Form.Group>
                 <Form.Group className="mb-2"><Form.Label>주소</Form.Label><Form.Control type="text" name="address" placeholder="서울시 강남구 테헤란로" value={vCard.address} onChange={handleVCardChange} /></Form.Group>
                 <MemoCustomizer memo={memo} setMemo={setMemo} color={memoColor} setColor={setMemoColor} size={memoSize} setSize={setMemoSize} />
-                <Button variant="primary" type="submit" className="mt-4 w-100">QR 코드 생성</Button>
+                <Button style={{borderRadius: 0}} variant="primary" type="submit" className="mt-4 w-100">QR 코드 생성</Button>
               </Form>
             </Tab>
             <Tab eventKey="wifi" title="Wi-Fi">
@@ -217,7 +222,7 @@ export default function HomePage() {
                 <Form.Group className="mb-2"><Form.Label>비밀번호</Form.Label><Form.Control type="password" name="password" placeholder="비밀번호" value={wifi.password} onChange={(e) => setWifi({...wifi, password: e.target.value})} /></Form.Group>
                 <Form.Group className="mb-2"><Form.Label>암호화 방식</Form.Label><Form.Select name="encryption" value={wifi.encryption} onChange={(e) => setWifi({...wifi, encryption: e.target.value})}><option value="WPA">WPA/WPA2</option><option value="WEP">WEP</option><option value="nopass">없음</option></Form.Select></Form.Group>
                 <MemoCustomizer memo={memo} setMemo={setMemo} color={memoColor} setColor={setMemoColor} size={memoSize} setSize={setMemoSize} />
-                <Button variant="primary" type="submit" className="mt-4 w-100">QR 코드 생성</Button>
+                <Button style={{borderRadius: 0}} variant="primary" type="submit" className="mt-4 w-100">QR 코드 생성</Button>
               </Form>
             </Tab>
             <Tab eventKey="payment" title="계좌이체">
@@ -227,8 +232,11 @@ export default function HomePage() {
                 <Form.Group className="mb-2"><Form.Label>예금주</Form.Label><Form.Control type="text" name="accountHolder" placeholder="홍길동" value={payment.accountHolder} onChange={(e) => setPayment({...payment, accountHolder: e.target.value})} /></Form.Group>
                 <Form.Group className="mb-2"><Form.Label>금액 (선택 사항)</Form.Label><Form.Control type="number" name="amount" placeholder="10000" value={payment.amount} onChange={(e) => setPayment({...payment, amount: e.target.value})} /></Form.Group>
                 <TemplateSelector selected={template} onChange={setTemplate} />
+                {template === 'web-payment' && 
+                  <Form.Group className="mt-3"><Form.Label>배경 이미지 URL (선택 사항)</Form.Label><Form.Control type="url" placeholder="https://example.com/image.png" value={backgroundUrl} onChange={(e) => setBackgroundUrl(e.target.value)} /></Form.Group>
+                }
                 <MemoCustomizer memo={memo} setMemo={setMemo} color={memoColor} setColor={setMemoColor} size={memoSize} setSize={setMemoSize} />
-                <Button variant="primary" type="submit" className="mt-4 w-100">QR 코드 생성</Button>
+                <Button style={{borderRadius: 0}} variant="primary" type="submit" className="mt-4 w-100">QR 코드 생성</Button>
               </Form>
             </Tab>
           </Tabs>
@@ -244,7 +252,7 @@ export default function HomePage() {
                     <QRCode value={finalQrValue} size={256} />
                   </div>
                   <br />
-                  <Button variant="secondary" onClick={handleDownload} className="mt-3">다운로드</Button>
+                  <Button style={{borderRadius: 0}} variant="secondary" onClick={handleDownload} className="mt-3">다운로드</Button>
                 </>
                 :
                 <p className="qr-code-placeholder">내용 입력 후 'QR 코드 생성' 버튼을 눌러주세요.</p>

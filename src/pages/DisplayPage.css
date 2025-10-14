@@ -396,6 +396,112 @@
     background-color: #e9ecef;
 }
 
-.accordion-body {
-    padding: 0.5rem 1.25rem;
+/* Web Payment Page Template */
+.web-payment-container {
+    width: 100%;
+    background-color: #f0f2f5;
+    min-height: 100vh;
+}
+
+.web-payment {
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    font-family: 'Noto Sans KR', sans-serif;
+}
+
+.web-payment .header-image {
+    height: 180px;
+    background-size: cover;
+    background-position: center;
+}
+
+.web-payment .content {
+    padding: 24px;
+    text-align: center;
+}
+
+.web-payment .account-info h2 {
+    font-size: 1rem;
+    color: #6c757d;
+    margin: 16px 0 4px 0;
+    font-weight: 500;
+}
+
+.web-payment .account-info .bank-name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #343a40;
+}
+
+.web-payment .account-info .account-number {
+    font-size: 1.5rem;
+    color: #212529;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.web-payment .copy-button {
+    width: 100%;
+    padding: 14px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 0; /* Sharp corners */
+    cursor: pointer;
+    margin: 24px 0;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.web-payment .copy-button:hover {
+    background-color: #0056b3;
+}
+
+.web-payment .divider {
+    font-size: 0.9rem;
+    color: #aaa;
+    margin-bottom: 16px;
+}
+
+.web-payment .app-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.web-payment .app-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: #555;
+    font-size: 0.9rem;
+    transition: opacity 0.2s;
+}
+
+.web-payment .app-link:hover {
+    opacity: 0.7;
+}
+
+.web-payment .app-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 0; /* Sharp corners */
+    background-color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 8px;
+    border: 1px solid #e9ecef;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+.web-payment .app-icon img {
+    max-width: 100%;
+    max-height: 100%;
 }
