@@ -40,7 +40,7 @@ const bankApps = [
   {
     name: '우리은행',
     logo: 'https://logo.clearbit.com/wooribank.com',
-    scheme: 'wooriwon://' // Common guess
+    scheme: 'wooriwon://'
   },
   {
     name: 'IBK기업',
@@ -50,7 +50,7 @@ const bankApps = [
   {
     name: '하나은행',
     logo: 'https://logo.clearbit.com/hanabank.com',
-    scheme: 'hanawonq://' // Common guess
+    scheme: 'hanawonq://'
   },
   {
     name: '씨티모바일',
