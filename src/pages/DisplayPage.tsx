@@ -22,11 +22,6 @@ const bankApps = [
     logo: 'https://top2020.dothome.co.kr/builder/summernote/1760429603_80d243fc05826e1c0269.png',
     scheme: 'newnhsmartbanking://'
   },
-  {
-    name: '우체국은행',
-    logo: null,
-    scheme: '#'
-  },
 ];
 
 export default function DisplayPage() {
