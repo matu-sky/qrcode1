@@ -9,22 +9,22 @@ import './DisplayPage.css'; // Import the CSS
 const bankApps = [
   {
     name: '토스',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/4/44/Toss-logo.svg',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Toss-logo.svg/2560px-Toss-logo.svg.png',
     scheme: 'supertoss://'
   },
   {
     name: '카카오뱅크',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/b/b0/KakaoBank_logo.svg',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/KakaoBank_logo.svg/630px-KakaoBank_logo.svg.png',
     scheme: 'kakaobank://'
   },
   {
     name: 'NH농협',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/NACF_%28NongHyup%29_Logo_with_wordmark.svg/1024px-NACF_%28NongHyup%29_Logo_with_wordmark.svg.png',
+    logo: 'https://t1.daumcdn.net/cfile/tistory/99E49B3C5BBF05A30C',
     scheme: 'newnhsmartbanking://'
   },
   {
     name: 'IBK기업',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/2/2a/Industrial_Bank_of_Korea_Logo.svg',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Industrial_Bank_of_Korea_Logo.svg/2560px-Industrial_Bank_of_Korea_Logo.svg.png',
     scheme: 'ibk-one-bank://'
   },
   {
