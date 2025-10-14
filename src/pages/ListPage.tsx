@@ -77,7 +77,7 @@ export default function ListPage() {
       <Container className="mt-5">
         <div className="d-flex justify-content-between align-items-center mb-4">
           <h1>저장된 메뉴 목록</h1>
-          <Link to="/" className="btn btn-primary">새 메뉴 만들기</Link>
+          <Link to="/menu" className="btn btn-primary">새 메뉴 만들기</Link>
         </div>
 
         {loading && <div className="text-center"><Spinner animation="border" /></div>}
@@ -95,7 +95,7 @@ export default function ListPage() {
                     </small>
                   </div>
                   <div>
-                    <Link to={`/?edit_id=${menu.id}`} className="btn btn-outline-secondary me-2">
+                    <Link to={`/menu?edit_id=${menu.id}`} className="btn btn-outline-secondary me-2">
                       수정
                     </Link>
                     <Button variant="outline-danger" onClick={() => handleDelete(menu.id)}>
