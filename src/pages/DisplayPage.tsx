@@ -9,32 +9,32 @@ import './DisplayPage.css'; // Import the CSS
 const bankApps = [
   {
     name: '토스',
-    logo: '/logo192.png',
+    logo: 'https://logo.clearbit.com/toss.im',
     scheme: 'supertoss://'
   },
   {
     name: '카카오뱅크',
-    logo: '/logo192.png',
+    logo: 'https://logo.clearbit.com/kakaobank.com',
     scheme: 'kakaobank://'
   },
   {
     name: 'NH농협',
-    logo: '/logo192.png',
+    logo: 'https://logo.clearbit.com/nhbank.com',
     scheme: 'newnhsmartbanking://'
   },
   {
     name: 'IBK기업',
-    logo: '/logo192.png',
+    logo: 'https://logo.clearbit.com/ibk.co.kr',
     scheme: 'ibk-one-bank://'
   },
   {
     name: '우리은행',
-    logo: '/logo192.png',
+    logo: 'https://logo.clearbit.com/wooribank.com',
     scheme: 'wooriwon://' // Common guess
   },
   {
     name: '하나은행',
-    logo: '/logo192.png',
+    logo: 'https://logo.clearbit.com/hanabank.com',
     scheme: 'hanawonq://' // Common guess
   },
 ];
