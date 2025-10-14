@@ -19,17 +19,17 @@ const bankApps = [
   },
   {
     name: 'NH농협',
-    logo: 'https://logo.clearbit.com/nhbank.com',
+    logo: 'https://www.nhbank.com/nh/images/common/logo_nh.png',
     scheme: 'newnhsmartbanking://'
   },
   {
     name: 'IBK기업',
-    logo: 'https://logo.clearbit.com/ibk.co.kr',
+    logo: 'https://www.ibk.co.kr/img/logo/logo_ibk.png',
     scheme: 'ibk-one-bank://'
   },
   {
     name: '우리은행',
-    logo: 'https://logo.clearbit.com/wooribank.com',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/%EC%9A%B0%EB%A6%AC%EC%9D%80%ED%96%89_%EB%A1%9C%EA%B3%A0.svg/2560px-%EC%9A%B0%EB%A6%AC%EC%9D%80%ED%96%89_%EB%A1%9C%EA%B3%A0.svg.png',
     scheme: 'wooriwon://' // Common guess
   },
   {
