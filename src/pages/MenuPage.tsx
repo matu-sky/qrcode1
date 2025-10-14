@@ -106,7 +106,7 @@ const MenuForm = ({ menuData, setMenuData }: any) => {
                     name="shopDescription"
                     placeholder="손님들께 전하고 싶은 말을 적어보세요."
                     value={menuData.shopDescription}
-                    onChange={handleShopInfochange}
+                    onChange={handleShopInfoChange}
                     />
                 </Form.Group>
             </Col>
