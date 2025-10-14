@@ -22,56 +22,6 @@ const bankApps = [
     logo: 'https://logo.clearbit.com/nhbank.com',
     scheme: 'newnhsmartbanking://'
   },
-  {
-    name: 'NH콕뱅크',
-    logo: 'https://logo.clearbit.com/nhbank.com',
-    scheme: '#'
-  },
-  {
-    name: '신한 SOL',
-    logo: 'https://logo.clearbit.com/shinhan.com',
-    scheme: 'shinhan-s-banking://'
-  },
-  {
-    name: 'KB스타뱅킹',
-    logo: 'https://logo.clearbit.com/kbfg.com',
-    scheme: 'kbbank://'
-  },
-  {
-    name: '우리은행',
-    logo: 'https://logo.clearbit.com/wooribank.com',
-    scheme: 'wooriwon://'
-  },
-  {
-    name: 'IBK기업',
-    logo: 'https://logo.clearbit.com/ibk.co.kr',
-    scheme: 'ibk-one-bank://'
-  },
-  {
-    name: '하나은행',
-    logo: 'https://logo.clearbit.com/hanabank.com',
-    scheme: 'hanawonq://'
-  },
-  {
-    name: '씨티모바일',
-    logo: 'https://logo.clearbit.com/citibank.co.kr',
-    scheme: 'citimobileapp://'
-  },
-  {
-    name: 'DGB대구은행',
-    logo: 'https://logo.clearbit.com/dgb.co.kr',
-    scheme: 'mbanking://'
-  },
-  {
-    name: '수협',
-    logo: 'https://logo.clearbit.com/suhyup-bank.com',
-    scheme: '#'
-  },
-  {
-    name: '신협 ON',
-    logo: 'https://logo.clearbit.com/cu.co.kr',
-    scheme: 'cu-bankpay://'
-  },
 ];
 
 export default function DisplayPage() {
