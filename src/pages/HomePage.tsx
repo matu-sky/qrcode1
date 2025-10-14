@@ -265,6 +265,8 @@ export default function HomePage() {
                     <QRCode value={finalQrValue} size={256} />
                   </div>
                   <br />
+                  <code style={{ wordBreak: 'break-all' }}>{finalQrValue}</code>
+                  <br />
                   <Button style={{borderRadius: 0}} variant="secondary" onClick={handleDownload} className="mt-3">다운로드</Button>
                 </>
                 :
