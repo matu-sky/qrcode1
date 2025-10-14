@@ -125,18 +125,27 @@ export default function HomePage() {
         break;
       case 'text': {
         if (!text) return;
-        const params = new URLSearchParams({ type: 'text', template, text });
+        const params = new URLSearchParams();
+        params.set('type', 'text');
+        params.set('template', template);
+        params.set('text', text);
         setFinalQrValue(`${displayUrl}?${params.toString()}`);
         break;
       }
       case 'vcard': {
         if (Object.values(vCard).every(field => field === '')) return;
-        const params = new URLSearchParams({ type: 'vcard'});
-        Object.entries(vCard).forEach(([key, value]) => {
-          if (value) {
-            params.set(key, value);
-          }
-        });
+        const params = new URLSearchParams();
+        params.set('type', 'vcard');
+        // Set in a fixed order
+        if (vCard.name) params.set('name', vCard.name);
+        if (vCard.org) params.set('org', vCard.org);
+        if (vCard.title) params.set('title', vCard.title);
+        if (vCard.phone) params.set('phone', vCard.phone);
+        if (vCard.workPhone) params.set('workPhone', vCard.workPhone);
+        if (vCard.fax) params.set('fax', vCard.fax);
+        if (vCard.email) params.set('email', vCard.email);
+        if (vCard.website) params.set('website', vCard.website);
+        if (vCard.address) params.set('address', vCard.address);
         setFinalQrValue(`${displayUrl}?${params.toString()}`);
         break;
       }
@@ -149,7 +158,11 @@ export default function HomePage() {
       }
       case 'payment': {
         if (!payment.bank && !payment.accountNumber) return;
-        const params = new URLSearchParams({ type: 'payment', template, bank: payment.bank, accountNumber: payment.accountNumber });
+        const params = new URLSearchParams();
+        params.set('type', 'payment');
+        params.set('template', template);
+        params.set('bank', payment.bank);
+        params.set('accountNumber', payment.accountNumber);
         if (payment.accountHolder) params.set('accountHolder', payment.accountHolder);
         if (payment.amount) params.set('amount', payment.amount);
         if (template === 'web-payment' && backgroundUrl) {
