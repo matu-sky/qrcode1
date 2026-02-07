@@ -22,6 +22,21 @@ const bankApps = [
     logo: 'https://top2020.dothome.co.kr/builder/summernote/1760429603_80d243fc05826e1c0269.png',
     scheme: 'newnhsmartbanking://'
   },
+  {
+    name: 'KB국민은행',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/9/9a/KB_logo.svg',
+    scheme: 'kBbank://'
+  },
+  {
+    name: '신한은행',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/3/36/Shinhan_Bank_logo_-_horizontal.svg',
+    scheme: 'shinhan-sr-ansimclick://'
+  },
+  {
+    name: '하나은행',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/1/11/Hana_Bank_Logo_(kor).svg',
+    scheme: 'hanapush://'
+  },
 ];
 
 export default function DisplayPage() {
