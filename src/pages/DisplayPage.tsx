@@ -24,17 +24,17 @@ const bankApps = [
   },
   {
     name: 'KB국민은행',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/9/9a/KB_logo.svg',
+    logo: 'https://asset.brandfetch.io/idq4-x4AbG/id40bUa18p.png',
     scheme: 'kBbank://'
   },
   {
     name: '신한은행',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/3/36/Shinhan_Bank_logo_-_horizontal.svg',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Shinhan_Bank_logo.png/578px-Shinhan_Bank_logo.png',
     scheme: 'shinhan-sr-ansimclick://'
   },
   {
     name: '하나은행',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/1/11/Hana_Bank_Logo_(kor).svg',
+    logo: 'https://asset.brandfetch.io/idT3jI-38A/id40bUa18p.png',
     scheme: 'hanapush://'
   },
 ];
