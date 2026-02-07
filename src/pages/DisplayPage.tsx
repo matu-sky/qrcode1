@@ -9,12 +9,12 @@ import './DisplayPage.css'; // Import the CSS
 const bankApps = [
   {
     name: '토스',
-    logo: 'https://logo.clearbit.com/toss.im',
+    logo: 'https://static.toss.im/logos/svg/logo-toss-blue.svg',
     scheme: 'supertoss://'
   },
   {
     name: '카카오뱅크',
-    logo: 'https://logo.clearbit.com/kakaobank.com',
+    logo: 'https://www.kakaobank.com/static/images/web/logo_black.svg',
     scheme: 'kakaobank://'
   },
   {
