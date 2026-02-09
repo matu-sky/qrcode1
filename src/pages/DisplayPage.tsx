@@ -9,17 +9,17 @@ import './DisplayPage.css'; // Import the CSS
 const bankApps = [
   {
     name: '토스',
-    logo: '/logos/toss.svg',
+    logo: 'https://static.toss.im/logos/svg/logo-toss-blue.svg',
     scheme: 'supertoss://'
   },
   {
     name: '카카오뱅크',
-    logo: '/logos/kakaobank.svg',
+    logo: 'https://www.kakaobank.com/static/images/web/logo_black.svg',
     scheme: 'kakaobank://'
   },
   {
     name: 'NH농협',
-    logo: '/logos/nh.png',
+    logo: 'https://top2020.dothome.co.kr/builder/summernote/1760429603_80d243fc05826e1c0269.png',
     scheme: 'newnhsmartbanking://'
   },
   {
