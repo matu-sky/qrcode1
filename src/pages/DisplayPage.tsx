@@ -29,7 +29,7 @@ const bankApps = [
   },
   {
     name: '신한은행',
-    logo: 'https://upload.wikimedia.org/wikipedia/ko/thumb/5/5a/Shinhan_Bank_logo.png/578px-Shinhan_Bank_logo.png',
+    logo: '/logos/shinhan.png',
     scheme: 'shinhan-sr-ansimclick://'
   },
   {
