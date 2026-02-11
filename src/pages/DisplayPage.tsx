@@ -34,7 +34,7 @@ const bankApps = [
   },
   {
     name: '하나은행',
-    logo: 'https://asset.brandfetch.io/idT3jI-38A/id40bUa18p.png',
+    logo: '/logos/hana.png',
     scheme: 'hanapush://'
   },
 ];
