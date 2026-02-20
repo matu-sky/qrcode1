@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Button, Spinner, Accordion } from 'react-bootstrap';
+import { usePrompt } from '../hooks/usePrompt';
 import { supabase } from '../supabaseClient';
 import './DisplayPage.css'; // Import the CSS
 
@@ -77,23 +78,10 @@ export default function DisplayPage() {
     address: searchParams.get('address'),
   };
 
-  useEffect(() => {
-    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      event.preventDefault();
-      event.returnValue = "연락처를 저장하지 않으면 정보가 사라집니다.";
-      return "연락처를 저장하지 않으면 정보가 사라집니다.";
-    };
-
-    if (type === 'vcard' && !vCardSaved) {
-      window.addEventListener('beforeunload', handleBeforeUnload);
-    }
-
-    return () => {
-      if (type === 'vcard' && !vCardSaved) {
-        window.removeEventListener('beforeunload', handleBeforeUnload);
-      }
-    };
-  }, [type, vCardSaved]);
+  usePrompt({
+    when: type === 'vcard' && !vCardSaved,
+    message: '연락처를 저장하지 않으면 정보가 사라집니다. 정말로 나가시겠습니까?',
+  });
 
   useEffect(() => {
     if (type === 'menu' && menuId) {
