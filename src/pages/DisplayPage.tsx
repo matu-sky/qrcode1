@@ -259,7 +259,7 @@ export default function DisplayPage() {
 
     if (type === 'vcard') {
       return (
-        <>
+        <div className="business-card">
           {vCardData.name && <div className="name">{vCardData.name}</div>}
           {vCardData.title && <div className="title">{vCardData.title}</div>}
           {vCardData.org && <div className="org">{vCardData.org}</div>}
@@ -272,7 +272,7 @@ export default function DisplayPage() {
           {vCardData.address && <div className="contact-item"><span className="icon">📍</span> <span>{vCardData.address}</span></div>}
 
           <Button style={{borderRadius: 0}} variant="primary" onClick={handleSaveVCard} className="w-100 mt-4">연락처 저장</Button>
-        </>
+        </div>
       );
     }
 
@@ -307,16 +307,19 @@ export default function DisplayPage() {
 
   const getContainerClass = () => {
     if (type === 'payment' && template === 'web-payment') return 'web-payment-container';
-    if (type === 'vcard') return 'business-card';
     if (type === 'menu') return 'menu-template';
     return template;
   };
 
   return (
     <div className="template-container">
-      <div className={getContainerClass()}>
-        {renderContent()}
-      </div>
+      {type === 'vcard' ? (
+        renderContent()
+      ) : (
+        <div className={getContainerClass()}>
+          {renderContent()}
+        </div>
+      )}
     </div>
   );
 }
