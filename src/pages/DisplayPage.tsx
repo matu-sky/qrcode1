@@ -42,6 +42,7 @@ const bankApps = [
 export default function DisplayPage() {
   const [searchParams] = useSearchParams();
   const [copied, setCopied] = useState(false);
+  const [vCardSaved, setVCardSaved] = useState(false);
   const [priceType, setPriceType] = useState('dineIn'); // 'dineIn' or 'takeout'
   const [view, setView] = useState('welcome'); // 'welcome' or 'menu'
   
@@ -75,6 +76,24 @@ export default function DisplayPage() {
     website: searchParams.get('website'),
     address: searchParams.get('address'),
   };
+
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = "연락처를 저장하지 않으면 정보가 사라집니다.";
+      return "연락처를 저장하지 않으면 정보가 사라집니다.";
+    };
+
+    if (type === 'vcard' && !vCardSaved) {
+      window.addEventListener('beforeunload', handleBeforeUnload);
+    }
+
+    return () => {
+      if (type === 'vcard' && !vCardSaved) {
+        window.removeEventListener('beforeunload', handleBeforeUnload);
+      }
+    };
+  }, [type, vCardSaved]);
 
   useEffect(() => {
     if (type === 'menu' && menuId) {
@@ -138,6 +157,7 @@ export default function DisplayPage() {
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
+    setVCardSaved(true);
   };
 
   const handlePriceSelection = (type: string) => {
