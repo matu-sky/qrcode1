@@ -44,7 +44,6 @@ const bankApps = [
 export default function DisplayPage() {
   const [searchParams] = useSearchParams();
   const [copied, setCopied] = useState(false);
-  const [vCardSaved, setVCardSaved] = useState(false);
   const [priceType, setPriceType] = useState('dineIn'); // 'dineIn' or 'takeout'
   const [view, setView] = useState('welcome'); // 'welcome' or 'menu'
   
@@ -146,7 +145,6 @@ export default function DisplayPage() {
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-    setVCardSaved(true);
   };
 
   const handlePriceSelection = (type: string) => {
