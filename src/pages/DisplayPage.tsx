@@ -34,6 +34,7 @@ const bankApps = [
     name: 'KB국민은행',
     logo: '/logos/kb.png',
     scheme: 'kbbank://',
+    altSchemes: ['kb-acp://', 'kBbank://', 'newliiv://'],
     androidPackage: 'com.kbstar.kbbank',
     iosId: '373742138',
   },
@@ -68,22 +69,28 @@ export default function DisplayPage() {
     const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
 
     if (isAndroid) {
-      // Android: intent scheme 방식 - 앱 설치 시 앱 실행, 미설치 시 플레이스토어로 이동
-      const intentUrl = `intent://#Intent;scheme=${app.scheme.replace('://', '')};package=${app.androidPackage};end`;
-      window.location.href = intentUrl;
+      // Android: intent scheme으로 패키지 직접 지정하여 앱 실행
+      const intentUrl = `intent://main#Intent;scheme=kbstarbanking;package=${app.androidPackage};S.browser_fallback_url=https://play.google.com/store/apps/details?id=${app.androidPackage};end`;
+      
+      if (app.name === 'KB국민은행') {
+        // KB는 패키지명 기반 intent로 직접 실행
+        window.location.href = intentUrl;
+      } else {
+        // 다른 은행은 기존 scheme 방식
+        const otherIntentUrl = `intent://#Intent;scheme=${app.scheme.replace('://', '')};package=${app.androidPackage};S.browser_fallback_url=https://play.google.com/store/apps/details?id=${app.androidPackage};end`;
+        window.location.href = otherIntentUrl;
+      }
     } else if (isIOS) {
       // iOS: scheme 시도 후 timeout으로 앱스토어 fallback
       const appStoreUrl = `https://apps.apple.com/kr/app/id${app.iosId}`;
       const now = Date.now();
       window.location.href = app.scheme;
       setTimeout(() => {
-        // 앱이 열리면 이 코드는 실행되지 않음 (페이지가 백그라운드로 가므로)
         if (Date.now() - now < 2000) {
           window.location.href = appStoreUrl;
         }
       }, 1000);
     } else {
-      // PC 등: 기본 scheme 시도
       window.location.href = app.scheme;
     }
   };
