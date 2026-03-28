@@ -1,5 +1,3 @@
-
-
 // Force re-deploy
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -170,7 +168,7 @@ export default function DisplayPage() {
         <div className="web-payment">
             <div 
                 className="header-image" 
-                style={{ backgroundImage: `url(${backgroundUrl || '/images/payment-header.png'})` }}
+                style={{ backgroundImage: `url(${backgroundUrl || '/payment-header.png'})` }}
             ></div>
             <div className="content">
                 <div className="account-info">
