@@ -47,8 +47,8 @@ const TemplateSelector = ({ selected, onChange }: { selected: string, onChange: 
 );
 
 // Feature Card Component
-const FeatureCard = ({ icon, title, description }: { icon: string, title: string, description: string }) => (
-  <div className="feature-card">
+const FeatureCard = ({ icon, title, description, onClick }: { icon: string, title: string, description: string, onClick?: () => void }) => (
+  <div className="feature-card" onClick={onClick} style={{ cursor: onClick ? 'pointer' : 'default' }}>
     <div className="feature-icon">{icon}</div>
     <h3 className="feature-title">{title}</h3>
     <p className="feature-desc">{description}</p>
@@ -166,6 +166,19 @@ export default function HomePage() {
     generatorRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const goToTab = (tabKey: string) => {
+    setActiveTab(tabKey);
+    setFinalQrValue('');
+    setMemo('');
+    setDisplayMemo({ text: '', color: '', size: '' });
+    setMemoColor('#000000');
+    setMemoSize('1.25rem');
+    if (tabKey === 'payment') { setTemplate('web-payment'); } else { setTemplate('memo'); }
+    setTimeout(() => {
+      generatorRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+  };
+
   return (
     <>
       <AppNavbar />
@@ -216,12 +229,12 @@ export default function HomePage() {
           <h2 className="section-title">다양한 QR 코드를 한 곳에서</h2>
           <p className="section-subtitle">필요한 모든 QR 코드 유형을 지원합니다</p>
           <div className="features-grid">
-            <FeatureCard icon="🔗" title="URL" description="웹사이트, SNS, 블로그 등 모든 링크를 QR로 변환하세요." />
-            <FeatureCard icon="💳" title="계좌이체" description="은행 계좌 정보를 담아 간편 송금 QR을 만드세요." />
-            <FeatureCard icon="📇" title="명함 (vCard)" description="이름, 연락처, 이메일 등 명함 정보를 담은 QR을 만드세요." />
-            <FeatureCard icon="📶" title="Wi-Fi" description="Wi-Fi 비밀번호를 QR로 만들어 손님에게 공유하세요." />
-            <FeatureCard icon="💬" title="SMS" description="전화번호와 메시지를 담은 문자 발송 QR을 만드세요." />
-            <FeatureCard icon="🍽️" title="메뉴판" description="매장/포장 가격이 분리된 디지털 메뉴판을 만드세요." />
+            <FeatureCard icon="🔗" title="URL" description="웹사이트, SNS, 블로그 등 모든 링크를 QR로 변환하세요." onClick={() => goToTab('url')} />
+            <FeatureCard icon="💳" title="계좌이체" description="은행 계좌 정보를 담아 간편 송금 QR을 만드세요." onClick={() => goToTab('payment')} />
+            <FeatureCard icon="📇" title="명함 (vCard)" description="이름, 연락처, 이메일 등 명함 정보를 담은 QR을 만드세요." onClick={() => goToTab('vcard')} />
+            <FeatureCard icon="📶" title="Wi-Fi" description="Wi-Fi 비밀번호를 QR로 만들어 손님에게 공유하세요." onClick={() => goToTab('wifi')} />
+            <FeatureCard icon="💬" title="SMS" description="전화번호와 메시지를 담은 문자 발송 QR을 만드세요." onClick={() => goToTab('sms')} />
+            <FeatureCard icon="🍽️" title="메뉴판" description="매장/포장 가격이 분리된 디지털 메뉴판을 만드세요." onClick={() => window.location.href = '/menu'} />
           </div>
         </Container>
       </section>
@@ -333,4 +346,3 @@ export default function HomePage() {
     </>
   );
 }
-
