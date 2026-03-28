@@ -170,7 +170,7 @@ export default function DisplayPage() {
         <div className="web-payment">
             <div 
                 className="header-image" 
-                style={{ backgroundImage: `url(${backgroundUrl || 'https://images.pexels.com/photos/3184454/pexels-photo-3184454.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'})` }}
+                style={{ backgroundImage: `url(${backgroundUrl || '/images/payment-header.png'})` }}
             ></div>
             <div className="content">
                 <div className="account-info">
