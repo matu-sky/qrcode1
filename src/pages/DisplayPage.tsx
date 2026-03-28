@@ -30,28 +30,6 @@ const bankApps = [
     androidPackage: 'com.nh.cashcardapp',
     iosId: '1445498819',
   },
-  {
-    name: 'KB국민은행',
-    logo: '/logos/kb.png',
-    scheme: 'kbbank://',
-    altSchemes: ['kb-acp://', 'kBbank://', 'newliiv://'],
-    androidPackage: 'com.kbstar.kbbank',
-    iosId: '373742138',
-  },
-  {
-    name: '신한은행',
-    logo: '/logos/shinhan.png',
-    scheme: 'shinhan-sr-ansimclick://',
-    androidPackage: 'com.shinhan.sbanking',
-    iosId: '357484932',
-  },
-  {
-    name: '하나은행',
-    logo: '/logos/hana.png',
-    scheme: 'hanapush://',
-    androidPackage: 'com.kebhana.hanapush',
-    iosId: '1574898498',
-  },
 ];
 
 export default function DisplayPage() {
@@ -69,19 +47,9 @@ export default function DisplayPage() {
     const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
 
     if (isAndroid) {
-      // Android: intent scheme으로 패키지 직접 지정하여 앱 실행
-      const intentUrl = `intent://main#Intent;scheme=kbstarbanking;package=${app.androidPackage};S.browser_fallback_url=https://play.google.com/store/apps/details?id=${app.androidPackage};end`;
-      
-      if (app.name === 'KB국민은행') {
-        // KB는 패키지명 기반 intent로 직접 실행
-        window.location.href = intentUrl;
-      } else {
-        // 다른 은행은 기존 scheme 방식
-        const otherIntentUrl = `intent://#Intent;scheme=${app.scheme.replace('://', '')};package=${app.androidPackage};S.browser_fallback_url=https://play.google.com/store/apps/details?id=${app.androidPackage};end`;
-        window.location.href = otherIntentUrl;
-      }
+      const intentUrl = `intent://#Intent;scheme=${app.scheme.replace('://', '')};package=${app.androidPackage};S.browser_fallback_url=https://play.google.com/store/apps/details?id=${app.androidPackage};end`;
+      window.location.href = intentUrl;
     } else if (isIOS) {
-      // iOS: scheme 시도 후 timeout으로 앱스토어 fallback
       const appStoreUrl = `https://apps.apple.com/kr/app/id${app.iosId}`;
       const now = Date.now();
       window.location.href = app.scheme;
@@ -214,6 +182,9 @@ export default function DisplayPage() {
                 <button className="copy-button" onClick={() => handleCopy(fullAccountNumber)}>
                     {copied ? '복사 완료!' : '계좌번호 복사하기'}
                 </button>
+                <p style={{ fontSize: '0.85rem', color: '#e74c3c', marginTop: '0.5rem', textAlign: 'center', fontWeight: 600 }}>
+                    계좌번호 복사 후 앱을 이용하세요
+                </p>
 
                 <div className="divider">앱으로 송금하기</div>
 
