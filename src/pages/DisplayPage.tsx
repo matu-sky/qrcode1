@@ -12,32 +12,44 @@ const bankApps = [
   {
     name: '토스',
     logo: 'https://static.toss.im/logos/svg/logo-toss-blue.svg',
-    scheme: 'supertoss://'
+    scheme: 'supertoss://',
+    androidPackage: 'viva.republica.toss',
+    iosId: '839333328',
   },
   {
     name: '카카오뱅크',
     logo: 'https://www.kakaobank.com/static/images/web/logo_black.svg',
-    scheme: 'kakaobank://'
+    scheme: 'kakaobank://',
+    androidPackage: 'com.kakaobank.channel',
+    iosId: '1258016944',
   },
   {
     name: 'NH농협',
     logo: 'https://top2020.dothome.co.kr/builder/summernote/1760429603_80d243fc05826e1c0269.png',
-    scheme: 'newnhsmartbanking://'
+    scheme: 'newnhsmartbanking://',
+    androidPackage: 'com.nh.cashcardapp',
+    iosId: '1445498819',
   },
   {
     name: 'KB국민은행',
     logo: '/logos/kb.png',
-    scheme: 'kBbank://'
+    scheme: 'kbbank://',
+    androidPackage: 'com.kbstar.kbbank',
+    iosId: '373742138',
   },
   {
     name: '신한은행',
     logo: '/logos/shinhan.png',
-    scheme: 'shinhan-sr-ansimclick://'
+    scheme: 'shinhan-sr-ansimclick://',
+    androidPackage: 'com.shinhan.sbanking',
+    iosId: '357484932',
   },
   {
     name: '하나은행',
     logo: '/logos/hana.png',
-    scheme: 'hanapush://'
+    scheme: 'hanapush://',
+    androidPackage: 'com.kebhana.hanapush',
+    iosId: '1574898498',
   },
 ];
 
@@ -50,6 +62,31 @@ export default function DisplayPage() {
   const [menuData, setMenuData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const handleOpenBankApp = (app: typeof bankApps[0]) => {
+    const isAndroid = /android/i.test(navigator.userAgent);
+    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+
+    if (isAndroid) {
+      // Android: intent scheme 방식 - 앱 설치 시 앱 실행, 미설치 시 플레이스토어로 이동
+      const intentUrl = `intent://#Intent;scheme=${app.scheme.replace('://', '')};package=${app.androidPackage};end`;
+      window.location.href = intentUrl;
+    } else if (isIOS) {
+      // iOS: scheme 시도 후 timeout으로 앱스토어 fallback
+      const appStoreUrl = `https://apps.apple.com/kr/app/id${app.iosId}`;
+      const now = Date.now();
+      window.location.href = app.scheme;
+      setTimeout(() => {
+        // 앱이 열리면 이 코드는 실행되지 않음 (페이지가 백그라운드로 가므로)
+        if (Date.now() - now < 2000) {
+          window.location.href = appStoreUrl;
+        }
+      }, 1000);
+    } else {
+      // PC 등: 기본 scheme 시도
+      window.location.href = app.scheme;
+    }
+  };
 
   // Get template and content type from URL
   const template = searchParams.get('template') || 'memo';
@@ -175,12 +212,12 @@ export default function DisplayPage() {
 
                 <div className="app-grid">
                     {bankApps.map(app => (
-                        <a href={app.scheme} className="app-link" key={app.name}>
+                        <div className="app-link" key={app.name} onClick={() => handleOpenBankApp(app)} style={{ cursor: 'pointer' }}>
                             <div className="app-icon">
                                 {app.logo ? <img src={app.logo} alt={app.name} /> : <strong>{app.name}</strong>}
                             </div>
                             <span>{app.name}</span>
-                        </a>
+                        </div>
                     ))}
                 </div>
             </div>
