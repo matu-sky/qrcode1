@@ -443,3 +443,67 @@
     font-size: 1.4rem;
   }
 }
+
+
+/* ============================
+   PRESET CARDS
+   ============================ */
+.preset-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.preset-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.6rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: #fff;
+}
+
+.preset-card:hover {
+  border-color: #93c5fd;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.preset-active {
+  border-color: #3b82f6 !important;
+  background: #eff6ff;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.preset-preview {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  margin-bottom: 0.4rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.preset-preview canvas, .preset-preview svg {
+  width: 80px !important;
+  height: 80px !important;
+}
+
+.preset-name {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #475569;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .preset-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
