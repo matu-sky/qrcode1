@@ -4,6 +4,22 @@ import QRCodeStyling, { DotType, CornerSquareType, CornerDotType } from 'qr-code
 import { toPng } from 'html-to-image';
 import AppNavbar from '../components/Navbar';
 
+// ===== PRESET DEFINITIONS =====
+const QR_PRESETS = [
+  { name: '기본', dotType: 'square' as DotType, cornerSquareType: 'square' as CornerSquareType, cornerDotType: 'square' as CornerDotType, fgColor: '#000000', bgColor: '#ffffff', useGradient: false, gradientColor: '#000000' },
+  { name: '모던', dotType: 'rounded' as DotType, cornerSquareType: 'extra-rounded' as CornerSquareType, cornerDotType: 'dot' as CornerDotType, fgColor: '#1a1a2e', bgColor: '#ffffff', useGradient: false, gradientColor: '#1a1a2e' },
+  { name: '서클', dotType: 'dots' as DotType, cornerSquareType: 'dot' as CornerSquareType, cornerDotType: 'dot' as CornerDotType, fgColor: '#2d3436', bgColor: '#ffffff', useGradient: false, gradientColor: '#2d3436' },
+  { name: '클래식', dotType: 'classy' as DotType, cornerSquareType: 'square' as CornerSquareType, cornerDotType: 'square' as CornerDotType, fgColor: '#2c3e50', bgColor: '#ecf0f1', useGradient: false, gradientColor: '#2c3e50' },
+  { name: '블루 그라데이션', dotType: 'rounded' as DotType, cornerSquareType: 'extra-rounded' as CornerSquareType, cornerDotType: 'dot' as CornerDotType, fgColor: '#0061ff', bgColor: '#ffffff', useGradient: true, gradientColor: '#60efff' },
+  { name: '퍼플 네온', dotType: 'dots' as DotType, cornerSquareType: 'dot' as CornerSquareType, cornerDotType: 'dot' as CornerDotType, fgColor: '#7b2ff7', bgColor: '#ffffff', useGradient: true, gradientColor: '#c471f5' },
+  { name: '선셋', dotType: 'extra-rounded' as DotType, cornerSquareType: 'extra-rounded' as CornerSquareType, cornerDotType: 'dot' as CornerDotType, fgColor: '#ff6b6b', bgColor: '#ffffff', useGradient: true, gradientColor: '#ffd93d' },
+  { name: '포레스트', dotType: 'classy-rounded' as DotType, cornerSquareType: 'extra-rounded' as CornerSquareType, cornerDotType: 'dot' as CornerDotType, fgColor: '#0b8457', bgColor: '#ffffff', useGradient: true, gradientColor: '#6fffe9' },
+  { name: '다크모드', dotType: 'rounded' as DotType, cornerSquareType: 'extra-rounded' as CornerSquareType, cornerDotType: 'dot' as CornerDotType, fgColor: '#e0e0e0', bgColor: '#1a1a2e', useGradient: false, gradientColor: '#e0e0e0' },
+  { name: '로즈골드', dotType: 'extra-rounded' as DotType, cornerSquareType: 'dot' as CornerSquareType, cornerDotType: 'dot' as CornerDotType, fgColor: '#b76e79', bgColor: '#fff5f5', useGradient: true, gradientColor: '#ebc4c8' },
+  { name: '오션', dotType: 'dots' as DotType, cornerSquareType: 'extra-rounded' as CornerSquareType, cornerDotType: 'dot' as CornerDotType, fgColor: '#0077b6', bgColor: '#ffffff', useGradient: true, gradientColor: '#00b4d8' },
+  { name: '미니멀', dotType: 'square' as DotType, cornerSquareType: 'square' as CornerSquareType, cornerDotType: 'square' as CornerDotType, fgColor: '#555555', bgColor: '#fafafa', useGradient: false, gradientColor: '#555555' },
+];
+
 // Reusable Memo Customizer Component
 const MemoCustomizer = ({ memo, setMemo, color, setColor, size, setSize }: any) => (
   <Form.Group className="mt-3 p-3 border rounded bg-light">
@@ -39,7 +55,7 @@ const QrStyleCustomizer = ({
   cornerDotType, setCornerDotType, useGradient, setUseGradient, gradientColor, setGradientColor
 }: any) => (
   <Form.Group className="mt-3 p-3 border rounded" style={{ backgroundColor: '#f0f4ff' }}>
-    <Form.Label className="fw-bold">QR 코드 디자인 설정</Form.Label>
+    <Form.Label className="fw-bold">세부 디자인 조정</Form.Label>
     <Row className="mb-2">
       <Col>
         <Form.Label>QR 색상</Form.Label>
@@ -140,7 +156,6 @@ const FeatureCard = ({ icon, title, description, onClick }: { icon: string, titl
   </div>
 );
 
-
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState('url');
   const [finalQrValue, setFinalQrValue] = useState('');
@@ -148,6 +163,7 @@ export default function HomePage() {
   const qrCanvasRef = useRef<HTMLDivElement>(null);
   const generatorRef = useRef<HTMLDivElement>(null);
   const qrCodeInstance = useRef<QRCodeStyling | null>(null);
+  const previewRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
   // Form states
   const [url, setUrl] = useState('');
@@ -177,27 +193,60 @@ export default function HomePage() {
   const [cornerDotType, setCornerDotType] = useState<CornerDotType>('square');
   const [useGradient, setUseGradient] = useState(false);
   const [gradientColor, setGradientColor] = useState('#0000ff');
+  const [selectedPreset, setSelectedPreset] = useState('기본');
+
+  // Preset preview rendering
+  useEffect(() => {
+    QR_PRESETS.forEach((preset) => {
+      const container = previewRefs.current[preset.name];
+      if (!container || container.childNodes.length > 0) return;
+
+      const dotsOptions: any = { type: preset.dotType };
+      if (preset.useGradient) {
+        dotsOptions.gradient = {
+          type: 'linear', rotation: Math.PI / 4,
+          colorStops: [{ offset: 0, color: preset.fgColor }, { offset: 1, color: preset.gradientColor }],
+        };
+      } else {
+        dotsOptions.color = preset.fgColor;
+      }
+
+      const qr = new QRCodeStyling({
+        width: 80, height: 80, data: 'https://example.com',
+        dotsOptions,
+        backgroundOptions: { color: preset.bgColor },
+        cornersSquareOptions: { type: preset.cornerSquareType, color: preset.fgColor },
+        cornersDotOptions: { type: preset.cornerDotType, color: preset.fgColor },
+        qrOptions: { errorCorrectionLevel: 'M' },
+      });
+      qr.append(container);
+    });
+  }, []);
+
+  const applyPreset = (preset: typeof QR_PRESETS[0]) => {
+    setSelectedPreset(preset.name);
+    setQrFgColor(preset.fgColor);
+    setQrBgColor(preset.bgColor);
+    setDotType(preset.dotType);
+    setCornerSquareType(preset.cornerSquareType);
+    setCornerDotType(preset.cornerDotType);
+    setUseGradient(preset.useGradient);
+    setGradientColor(preset.gradientColor);
+  };
 
   const getQrOptions = useCallback(() => {
-    const dotsOptions: any = {
-      type: dotType,
-    };
+    const dotsOptions: any = { type: dotType };
     if (useGradient) {
       dotsOptions.gradient = {
-        type: 'linear',
-        rotation: Math.PI / 4,
-        colorStops: [
-          { offset: 0, color: qrFgColor },
-          { offset: 1, color: gradientColor },
-        ],
+        type: 'linear', rotation: Math.PI / 4,
+        colorStops: [{ offset: 0, color: qrFgColor }, { offset: 1, color: gradientColor }],
       };
     } else {
       dotsOptions.color = qrFgColor;
     }
 
     return {
-      width: qrSize,
-      height: qrSize,
+      width: qrSize, height: qrSize,
       data: finalQrValue || 'https://example.com',
       dotsOptions,
       backgroundOptions: { color: qrBgColor },
@@ -209,12 +258,9 @@ export default function HomePage() {
     };
   }, [finalQrValue, qrFgColor, qrBgColor, qrSize, dotType, cornerSquareType, cornerDotType, useGradient, gradientColor, qrLogoUrl]);
 
-  // QR 코드 인스턴스 생성 및 업데이트
   useEffect(() => {
     if (!finalQrValue || !qrCanvasRef.current) return;
-
     const options = getQrOptions();
-
     if (!qrCodeInstance.current) {
       qrCodeInstance.current = new QRCodeStyling(options);
       qrCanvasRef.current.innerHTML = '';
@@ -254,8 +300,7 @@ export default function HomePage() {
     }
   };
 
-  const handleGenerate = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleGenerate = () => {
     setDisplayMemo({ text: memo, color: memoColor, size: memoSize });
     qrCodeInstance.current = null;
     if (qrCanvasRef.current) qrCanvasRef.current.innerHTML = '';
@@ -327,7 +372,7 @@ export default function HomePage() {
     }, 100);
   };
 
-  return (
+return (
     <>
       <AppNavbar />
 
@@ -393,34 +438,34 @@ export default function HomePage() {
           <Row>
             <Col><h2 className="text-center main-header">QR 코드 생성하기</h2></Col>
           </Row>
+
+          {/* STEP 1: 내용 입력 */}
           <Row>
             <Col md={7}>
+              <h5 className="mb-3" style={{ fontWeight: 600, color: '#2c3e50' }}>① 내용 입력</h5>
               <Tabs activeKey={activeTab} onSelect={handleTabSelect} id="qr-code-tabs" className="mb-4 custom-tabs">
                 <Tab eventKey="url" title="URL">
-                  <Form onSubmit={handleGenerate} className="p-2">
+                  <div className="p-2">
                     <Form.Group controlId="formUrl"><Form.Label>웹사이트 URL</Form.Label><Form.Control type="text" placeholder="https://example.com" value={url} onChange={(e) => setUrl(e.target.value)} /></Form.Group>
                     <MemoCustomizer memo={memo} setMemo={setMemo} color={memoColor} setColor={setMemoColor} size={memoSize} setSize={setMemoSize} />
-                    <Button style={{borderRadius: 0}} variant="primary" type="submit" className="mt-4 w-100">QR 코드 생성</Button>
-                  </Form>
+                  </div>
                 </Tab>
                 <Tab eventKey="text" title="텍스트">
-                  <Form onSubmit={handleGenerate} className="p-2">
+                  <div className="p-2">
                     <Form.Group controlId="formText"><Form.Label>내용</Form.Label><Form.Control as="textarea" rows={3} placeholder="QR 코드로 만들 텍스트를 입력하세요." value={text} onChange={(e) => setText(e.target.value)} /></Form.Group>
                     <TemplateSelector selected={template} onChange={setTemplate} />
                     <MemoCustomizer memo={memo} setMemo={setMemo} color={memoColor} setColor={setMemoColor} size={memoSize} setSize={setMemoSize} />
-                    <Button style={{borderRadius: 0}} variant="primary" type="submit" className="mt-4 w-100">QR 코드 생성</Button>
-                  </Form>
+                  </div>
                 </Tab>
                 <Tab eventKey="sms" title="SMS">
-                  <Form onSubmit={handleGenerate} className="p-2">
+                  <div className="p-2">
                     <Form.Group className="mb-2"><Form.Label>전화번호</Form.Label><Form.Control type="tel" placeholder="010-1234-5678" value={sms.phone} onChange={(e) => setSms({...sms, phone: e.target.value})} /></Form.Group>
                     <Form.Group className="mb-2"><Form.Label>메시지 내용</Form.Label><Form.Control as="textarea" rows={3} placeholder="보낼 메시지를 입력하세요." value={sms.message} onChange={(e) => setSms({...sms, message: e.target.value})} /></Form.Group>
                     <MemoCustomizer memo={memo} setMemo={setMemo} color={memoColor} setColor={setMemoColor} size={memoSize} setSize={setMemoSize} />
-                    <Button style={{borderRadius: 0}} variant="primary" type="submit" className="mt-4 w-100">QR 코드 생성</Button>
-                  </Form>
+                  </div>
                 </Tab>
                 <Tab eventKey="vcard" title="명함">
-                  <Form onSubmit={handleGenerate} className="p-2">
+                  <div className="p-2">
                     <Form.Group className="mb-2"><Form.Label>이름</Form.Label><Form.Control type="text" name="name" placeholder="홍길동" value={vCard.name} onChange={handleVCardChange} /></Form.Group>
                     <Form.Group className="mb-2"><Form.Label>회사</Form.Label><Form.Control type="text" name="org" placeholder="주식회사 홍길동" value={vCard.org} onChange={handleVCardChange} /></Form.Group>
                     <Form.Group className="mb-2"><Form.Label>직책</Form.Label><Form.Control type="text" name="title" placeholder="대표" value={vCard.title} onChange={handleVCardChange} /></Form.Group>
@@ -431,20 +476,18 @@ export default function HomePage() {
                     <Form.Group className="mb-2"><Form.Label>홈페이지</Form.Label><Form.Control type="text" name="website" placeholder="https://example.com" value={vCard.website} onChange={handleVCardChange} /></Form.Group>
                     <Form.Group className="mb-2"><Form.Label>주소</Form.Label><Form.Control type="text" name="address" placeholder="서울시 강남구 테헤란로" value={vCard.address} onChange={handleVCardChange} /></Form.Group>
                     <MemoCustomizer memo={memo} setMemo={setMemo} color={memoColor} setColor={setMemoColor} size={memoSize} setSize={setMemoSize} />
-                    <Button style={{borderRadius: 0}} variant="primary" type="submit" className="mt-4 w-100">QR 코드 생성</Button>
-                  </Form>
+                  </div>
                 </Tab>
                 <Tab eventKey="wifi" title="Wi-Fi">
-                  <Form onSubmit={handleGenerate} className="p-2">
+                  <div className="p-2">
                     <Form.Group className="mb-2"><Form.Label>네트워크 이름 (SSID)</Form.Label><Form.Control type="text" name="ssid" placeholder="MyWiFi" value={wifi.ssid} onChange={(e) => setWifi({...wifi, ssid: e.target.value})} /></Form.Group>
                     <Form.Group className="mb-2"><Form.Label>비밀번호</Form.Label><Form.Control type="password" name="password" placeholder="비밀번호" value={wifi.password} onChange={(e) => setWifi({...wifi, password: e.target.value})} /></Form.Group>
                     <Form.Group className="mb-2"><Form.Label>암호화 방식</Form.Label><Form.Select name="encryption" value={wifi.encryption} onChange={(e) => setWifi({...wifi, encryption: e.target.value})}><option value="WPA">WPA/WPA2</option><option value="WEP">WEP</option><option value="nopass">없음</option></Form.Select></Form.Group>
                     <MemoCustomizer memo={memo} setMemo={setMemo} color={memoColor} setColor={setMemoColor} size={memoSize} setSize={setMemoSize} />
-                    <Button style={{borderRadius: 0}} variant="primary" type="submit" className="mt-4 w-100">QR 코드 생성</Button>
-                  </Form>
+                  </div>
                 </Tab>
                 <Tab eventKey="payment" title="계좌이체">
-                  <Form onSubmit={handleGenerate} className="p-2">
+                  <div className="p-2">
                     <Form.Group className="mb-2"><Form.Label>은행</Form.Label><Form.Control type="text" name="bank" placeholder="예: 신한은행" value={payment.bank} onChange={(e) => setPayment({...payment, bank: e.target.value})} /></Form.Group>
                     <Form.Group className="mb-2"><Form.Label>계좌번호</Form.Label><Form.Control type="text" name="accountNumber" placeholder="110-XXX-XXXXXX" value={payment.accountNumber} onChange={(e) => setPayment({...payment, accountNumber: e.target.value})} /></Form.Group>
                     <Form.Group className="mb-2"><Form.Label>예금주</Form.Label><Form.Control type="text" name="accountHolder" placeholder="홍길동" value={payment.accountHolder} onChange={(e) => setPayment({...payment, accountHolder: e.target.value})} /></Form.Group>
@@ -454,24 +497,53 @@ export default function HomePage() {
                       <Form.Group className="mt-3"><Form.Label>배경 이미지 URL (선택 사항)</Form.Label><Form.Control type="url" placeholder="https://example.com/image.png" value={backgroundUrl} onChange={(e) => setBackgroundUrl(e.target.value)} /></Form.Group>
                     }
                     <MemoCustomizer memo={memo} setMemo={setMemo} color={memoColor} setColor={setMemoColor} size={memoSize} setSize={setMemoSize} />
-                    <Button style={{borderRadius: 0}} variant="primary" type="submit" className="mt-4 w-100">QR 코드 생성</Button>
-                  </Form>
+                  </div>
                 </Tab>
               </Tabs>
-              <div className="p-2">
-                <QrStyleCustomizer
-                  qrFgColor={qrFgColor} setQrFgColor={setQrFgColor}
-                  qrBgColor={qrBgColor} setQrBgColor={setQrBgColor}
-                  qrSize={qrSize} setQrSize={setQrSize}
-                  qrLogoUrl={qrLogoUrl} setQrLogoUrl={setQrLogoUrl}
-                  dotType={dotType} setDotType={setDotType}
-                  cornerSquareType={cornerSquareType} setCornerSquareType={setCornerSquareType}
-                  cornerDotType={cornerDotType} setCornerDotType={setCornerDotType}
-                  useGradient={useGradient} setUseGradient={setUseGradient}
-                  gradientColor={gradientColor} setGradientColor={setGradientColor}
-                />
+
+              {/* STEP 2: 디자인 선택 */}
+              <h5 className="mb-3 mt-4" style={{ fontWeight: 600, color: '#2c3e50' }}>② 디자인 선택</h5>
+              <div className="preset-grid">
+                {QR_PRESETS.map((preset) => (
+                  <div
+                    key={preset.name}
+                    className={`preset-card ${selectedPreset === preset.name ? 'preset-active' : ''}`}
+                    onClick={() => applyPreset(preset)}
+                  >
+                    <div
+                      className="preset-preview"
+                      style={{ backgroundColor: preset.bgColor }}
+                      ref={(el) => { previewRefs.current[preset.name] = el; }}
+                    ></div>
+                    <span className="preset-name">{preset.name}</span>
+                  </div>
+                ))}
               </div>
+
+              {/* 세부 조정 */}
+              <QrStyleCustomizer
+                qrFgColor={qrFgColor} setQrFgColor={setQrFgColor}
+                qrBgColor={qrBgColor} setQrBgColor={setQrBgColor}
+                qrSize={qrSize} setQrSize={setQrSize}
+                qrLogoUrl={qrLogoUrl} setQrLogoUrl={setQrLogoUrl}
+                dotType={dotType} setDotType={setDotType}
+                cornerSquareType={cornerSquareType} setCornerSquareType={setCornerSquareType}
+                cornerDotType={cornerDotType} setCornerDotType={setCornerDotType}
+                useGradient={useGradient} setUseGradient={setUseGradient}
+                gradientColor={gradientColor} setGradientColor={setGradientColor}
+              />
+
+              {/* STEP 3: 생성 버튼 */}
+              <Button
+                style={{ borderRadius: 0, fontSize: '1.1rem', padding: '0.9rem' }}
+                variant="primary"
+                className="mt-4 w-100"
+                onClick={handleGenerate}
+              >
+                QR 코드 생성하기
+              </Button>
             </Col>
+
             <Col md={5} className="text-center">
               <div className="qr-code-container d-flex justify-content-center align-items-center">
                 <div className="text-center">
@@ -486,7 +558,7 @@ export default function HomePage() {
                       <Button style={{borderRadius: 0}} variant="secondary" onClick={handleDownload} className="mt-3">다운로드</Button>
                     </>
                     :
-                    <p className="qr-code-placeholder">내용 입력 후 'QR 코드 생성' 버튼을 눌러주세요.</p>
+                    <p className="qr-code-placeholder">내용 입력 후 'QR 코드 생성하기' 버튼을 눌러주세요.</p>
                   }
                 </div>
               </div>
