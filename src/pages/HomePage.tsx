@@ -1,6 +1,6 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Container, Row, Col, Tabs, Tab, Form, Button } from 'react-bootstrap';
-import { QRCodeCanvas as QRCode } from 'qrcode.react';
+import QRCodeStyling, { DotType, CornerSquareType, CornerDotType } from 'qr-code-styling';
 import { toPng } from 'html-to-image';
 import AppNavbar from '../components/Navbar';
 
@@ -33,7 +33,11 @@ const MemoCustomizer = ({ memo, setMemo, color, setColor, size, setSize }: any) 
 );
 
 // QR Code Style Customizer Component
-const QrStyleCustomizer = ({ qrFgColor, setQrFgColor, qrBgColor, setQrBgColor, qrSize, setQrSize, qrLogoUrl, setQrLogoUrl }: any) => (
+const QrStyleCustomizer = ({
+  qrFgColor, setQrFgColor, qrBgColor, setQrBgColor, qrSize, setQrSize,
+  qrLogoUrl, setQrLogoUrl, dotType, setDotType, cornerSquareType, setCornerSquareType,
+  cornerDotType, setCornerDotType, useGradient, setUseGradient, gradientColor, setGradientColor
+}: any) => (
   <Form.Group className="mt-3 p-3 border rounded" style={{ backgroundColor: '#f0f4ff' }}>
     <Form.Label className="fw-bold">QR 코드 디자인 설정</Form.Label>
     <Row className="mb-2">
@@ -55,6 +59,50 @@ const QrStyleCustomizer = ({ qrFgColor, setQrFgColor, qrBgColor, setQrBgColor, q
           <option value={400}>매우 크게 (400)</option>
         </Form.Select>
       </Col>
+    </Row>
+    <Row className="mb-2">
+      <Col>
+        <Form.Label>도트 스타일</Form.Label>
+        <Form.Select value={dotType} onChange={(e) => setDotType(e.target.value)}>
+          <option value="square">사각형</option>
+          <option value="dots">원형</option>
+          <option value="rounded">둥근 사각</option>
+          <option value="extra-rounded">매우 둥근</option>
+          <option value="classy">클래식</option>
+          <option value="classy-rounded">클래식 둥근</option>
+        </Form.Select>
+      </Col>
+      <Col>
+        <Form.Label>코너 스타일</Form.Label>
+        <Form.Select value={cornerSquareType} onChange={(e) => setCornerSquareType(e.target.value)}>
+          <option value="square">사각형</option>
+          <option value="dot">원형</option>
+          <option value="extra-rounded">둥근</option>
+        </Form.Select>
+      </Col>
+      <Col>
+        <Form.Label>코너 도트</Form.Label>
+        <Form.Select value={cornerDotType} onChange={(e) => setCornerDotType(e.target.value)}>
+          <option value="square">사각형</option>
+          <option value="dot">원형</option>
+        </Form.Select>
+      </Col>
+    </Row>
+    <Row className="mb-2">
+      <Col>
+        <Form.Check
+          type="switch"
+          label="그라데이션 사용"
+          checked={useGradient}
+          onChange={(e) => setUseGradient(e.target.checked)}
+        />
+      </Col>
+      {useGradient && (
+        <Col>
+          <Form.Label>그라데이션 끝 색상</Form.Label>
+          <Form.Control type="color" value={gradientColor} onChange={(e) => setGradientColor(e.target.value)} />
+        </Col>
+      )}
     </Row>
     <Form.Group>
       <Form.Label>중앙 로고 URL (선택 사항)</Form.Label>
@@ -96,8 +144,10 @@ const FeatureCard = ({ icon, title, description, onClick }: { icon: string, titl
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState('url');
   const [finalQrValue, setFinalQrValue] = useState('');
-  const qrRef = useRef<any>(null);
+  const qrRef = useRef<HTMLDivElement>(null);
+  const qrCanvasRef = useRef<HTMLDivElement>(null);
   const generatorRef = useRef<HTMLDivElement>(null);
+  const qrCodeInstance = useRef<QRCodeStyling | null>(null);
 
   // Form states
   const [url, setUrl] = useState('');
@@ -122,6 +172,57 @@ export default function HomePage() {
   const [qrBgColor, setQrBgColor] = useState('#ffffff');
   const [qrSize, setQrSize] = useState(256);
   const [qrLogoUrl, setQrLogoUrl] = useState('');
+  const [dotType, setDotType] = useState<DotType>('square');
+  const [cornerSquareType, setCornerSquareType] = useState<CornerSquareType>('square');
+  const [cornerDotType, setCornerDotType] = useState<CornerDotType>('square');
+  const [useGradient, setUseGradient] = useState(false);
+  const [gradientColor, setGradientColor] = useState('#0000ff');
+
+  const getQrOptions = useCallback(() => {
+    const dotsOptions: any = {
+      type: dotType,
+    };
+    if (useGradient) {
+      dotsOptions.gradient = {
+        type: 'linear',
+        rotation: Math.PI / 4,
+        colorStops: [
+          { offset: 0, color: qrFgColor },
+          { offset: 1, color: gradientColor },
+        ],
+      };
+    } else {
+      dotsOptions.color = qrFgColor;
+    }
+
+    return {
+      width: qrSize,
+      height: qrSize,
+      data: finalQrValue || 'https://example.com',
+      dotsOptions,
+      backgroundOptions: { color: qrBgColor },
+      cornersSquareOptions: { type: cornerSquareType, color: qrFgColor },
+      cornersDotOptions: { type: cornerDotType, color: qrFgColor },
+      imageOptions: { crossOrigin: 'anonymous' as const, margin: 5, imageSize: 0.4 },
+      ...(qrLogoUrl ? { image: qrLogoUrl } : {}),
+      qrOptions: { errorCorrectionLevel: qrLogoUrl ? 'H' as const : 'M' as const },
+    };
+  }, [finalQrValue, qrFgColor, qrBgColor, qrSize, dotType, cornerSquareType, cornerDotType, useGradient, gradientColor, qrLogoUrl]);
+
+  // QR 코드 인스턴스 생성 및 업데이트
+  useEffect(() => {
+    if (!finalQrValue || !qrCanvasRef.current) return;
+
+    const options = getQrOptions();
+
+    if (!qrCodeInstance.current) {
+      qrCodeInstance.current = new QRCodeStyling(options);
+      qrCanvasRef.current.innerHTML = '';
+      qrCodeInstance.current.append(qrCanvasRef.current);
+    } else {
+      qrCodeInstance.current.update(options);
+    }
+  }, [finalQrValue, getQrOptions]);
 
   const handleVCardChange = (e: any) => {
     const { name, value } = e.target;
@@ -136,6 +237,7 @@ export default function HomePage() {
     setDisplayMemo({ text: '', color: '', size: '' });
     setMemoColor('#000000');
     setMemoSize('1.25rem');
+    qrCodeInstance.current = null;
     if (newTab === 'payment') { setTemplate('web-payment'); } else { setTemplate('memo'); }
   };
 
@@ -155,6 +257,8 @@ export default function HomePage() {
   const handleGenerate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setDisplayMemo({ text: memo, color: memoColor, size: memoSize });
+    qrCodeInstance.current = null;
+    if (qrCanvasRef.current) qrCanvasRef.current.innerHTML = '';
     const baseUrl = window.location.origin;
     const displayUrl = `${baseUrl}/display`;
 
@@ -216,6 +320,7 @@ export default function HomePage() {
     setDisplayMemo({ text: '', color: '', size: '' });
     setMemoColor('#000000');
     setMemoSize('1.25rem');
+    qrCodeInstance.current = null;
     if (tabKey === 'payment') { setTemplate('web-payment'); } else { setTemplate('memo'); }
     setTimeout(() => {
       generatorRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -354,7 +459,17 @@ export default function HomePage() {
                 </Tab>
               </Tabs>
               <div className="p-2">
-                <QrStyleCustomizer qrFgColor={qrFgColor} setQrFgColor={setQrFgColor} qrBgColor={qrBgColor} setQrBgColor={setQrBgColor} qrSize={qrSize} setQrSize={setQrSize} qrLogoUrl={qrLogoUrl} setQrLogoUrl={setQrLogoUrl} />
+                <QrStyleCustomizer
+                  qrFgColor={qrFgColor} setQrFgColor={setQrFgColor}
+                  qrBgColor={qrBgColor} setQrBgColor={setQrBgColor}
+                  qrSize={qrSize} setQrSize={setQrSize}
+                  qrLogoUrl={qrLogoUrl} setQrLogoUrl={setQrLogoUrl}
+                  dotType={dotType} setDotType={setDotType}
+                  cornerSquareType={cornerSquareType} setCornerSquareType={setCornerSquareType}
+                  cornerDotType={cornerDotType} setCornerDotType={setCornerDotType}
+                  useGradient={useGradient} setUseGradient={setUseGradient}
+                  gradientColor={gradientColor} setGradientColor={setGradientColor}
+                />
               </div>
             </Col>
             <Col md={5} className="text-center">
@@ -365,21 +480,7 @@ export default function HomePage() {
                     <>
                       <div ref={qrRef} className="qr-code-wrapper p-3 d-inline-block" style={{ backgroundColor: qrBgColor }}>
                         {displayMemo.text && <p className="qr-memo mb-2" style={{ color: displayMemo.color, fontSize: displayMemo.size }}>{displayMemo.text}</p>}
-                        <QRCode
-                          value={finalQrValue}
-                          size={qrSize}
-                          fgColor={qrFgColor}
-                          bgColor={qrBgColor}
-                          level={qrLogoUrl ? 'H' : 'M'}
-                          imageSettings={qrLogoUrl ? {
-                            src: qrLogoUrl,
-                            x: undefined,
-                            y: undefined,
-                            height: qrSize * 0.2,
-                            width: qrSize * 0.2,
-                            excavate: true,
-                          } : undefined}
-                        />
+                        <div ref={qrCanvasRef}></div>
                       </div>
                       <br />
                       <Button style={{borderRadius: 0}} variant="secondary" onClick={handleDownload} className="mt-3">다운로드</Button>
