@@ -32,6 +32,43 @@ const MemoCustomizer = ({ memo, setMemo, color, setColor, size, setSize }: any) 
   </Form.Group>
 );
 
+// QR Code Style Customizer Component
+const QrStyleCustomizer = ({ qrFgColor, setQrFgColor, qrBgColor, setQrBgColor, qrSize, setQrSize, qrLogoUrl, setQrLogoUrl }: any) => (
+  <Form.Group className="mt-3 p-3 border rounded" style={{ backgroundColor: '#f0f4ff' }}>
+    <Form.Label className="fw-bold">QR 코드 디자인 설정</Form.Label>
+    <Row className="mb-2">
+      <Col>
+        <Form.Label>QR 색상</Form.Label>
+        <Form.Control type="color" value={qrFgColor} onChange={(e) => setQrFgColor(e.target.value)} />
+      </Col>
+      <Col>
+        <Form.Label>배경 색상</Form.Label>
+        <Form.Control type="color" value={qrBgColor} onChange={(e) => setQrBgColor(e.target.value)} />
+      </Col>
+      <Col>
+        <Form.Label>크기</Form.Label>
+        <Form.Select value={qrSize} onChange={(e) => setQrSize(Number(e.target.value))}>
+          <option value={128}>작게 (128)</option>
+          <option value={192}>중간 (192)</option>
+          <option value={256}>기본 (256)</option>
+          <option value={320}>크게 (320)</option>
+          <option value={400}>매우 크게 (400)</option>
+        </Form.Select>
+      </Col>
+    </Row>
+    <Form.Group>
+      <Form.Label>중앙 로고 URL (선택 사항)</Form.Label>
+      <Form.Control
+        type="url"
+        placeholder="https://example.com/logo.png"
+        value={qrLogoUrl}
+        onChange={(e) => setQrLogoUrl(e.target.value)}
+      />
+      <Form.Text className="text-muted">로고 이미지 URL을 입력하면 QR 코드 가운데에 표시됩니다.</Form.Text>
+    </Form.Group>
+  </Form.Group>
+);
+
 // Sub-component for template selection
 const TemplateSelector = ({ selected, onChange }: { selected: string, onChange: (val: string) => void }) => (
   <Form.Group className="mt-4">
@@ -79,6 +116,12 @@ export default function HomePage() {
   const [memoColor, setMemoColor] = useState('#000000');
   const [memoSize, setMemoSize] = useState('1.25rem');
   const [displayMemo, setDisplayMemo] = useState({ text: '', color: '', size: '' });
+
+  // QR style states
+  const [qrFgColor, setQrFgColor] = useState('#000000');
+  const [qrBgColor, setQrBgColor] = useState('#ffffff');
+  const [qrSize, setQrSize] = useState(256);
+  const [qrLogoUrl, setQrLogoUrl] = useState('');
 
   const handleVCardChange = (e: any) => {
     const { name, value } = e.target;
@@ -310,6 +353,9 @@ export default function HomePage() {
                   </Form>
                 </Tab>
               </Tabs>
+              <div className="p-2">
+                <QrStyleCustomizer qrFgColor={qrFgColor} setQrFgColor={setQrFgColor} qrBgColor={qrBgColor} setQrBgColor={setQrBgColor} qrSize={qrSize} setQrSize={setQrSize} qrLogoUrl={qrLogoUrl} setQrLogoUrl={setQrLogoUrl} />
+              </div>
             </Col>
             <Col md={5} className="text-center">
               <div className="qr-code-container d-flex justify-content-center align-items-center">
@@ -317,9 +363,23 @@ export default function HomePage() {
                   <h4 className="mb-3">생성된 QR 코드</h4>
                   {finalQrValue ?
                     <>
-                      <div ref={qrRef} className="qr-code-wrapper p-3 d-inline-block bg-white">
+                      <div ref={qrRef} className="qr-code-wrapper p-3 d-inline-block" style={{ backgroundColor: qrBgColor }}>
                         {displayMemo.text && <p className="qr-memo mb-2" style={{ color: displayMemo.color, fontSize: displayMemo.size }}>{displayMemo.text}</p>}
-                        <QRCode value={finalQrValue} size={256} />
+                        <QRCode
+                          value={finalQrValue}
+                          size={qrSize}
+                          fgColor={qrFgColor}
+                          bgColor={qrBgColor}
+                          level={qrLogoUrl ? 'H' : 'M'}
+                          imageSettings={qrLogoUrl ? {
+                            src: qrLogoUrl,
+                            x: undefined,
+                            y: undefined,
+                            height: qrSize * 0.2,
+                            width: qrSize * 0.2,
+                            excavate: true,
+                          } : undefined}
+                        />
                       </div>
                       <br />
                       <Button style={{borderRadius: 0}} variant="secondary" onClick={handleDownload} className="mt-3">다운로드</Button>
