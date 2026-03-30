@@ -505,3 +505,222 @@
     max-width: 100%;
     max-height: 100%;
 }
+
+/* ============================
+   심플 화이트 템플릿
+   ============================ */
+.web-payment-simple {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  background: #ffffff;
+  font-family: 'Noto Sans KR', sans-serif;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.simple-header {
+  text-align: center;
+  padding: 2.5rem 1.5rem 1.5rem;
+  background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+}
+
+.simple-icon {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+}
+
+.simple-header h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+.simple-body {
+  padding: 1.5rem;
+}
+
+.simple-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.simple-label {
+  font-size: 0.9rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.simple-value {
+  font-size: 1rem;
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.simple-account-box {
+  background: #f0f4ff;
+  border: 1px solid #dbeafe;
+  border-radius: 12px;
+  padding: 1.2rem;
+  text-align: center;
+  margin: 1.2rem 0;
+}
+
+.simple-account-label {
+  display: block;
+  font-size: 0.8rem;
+  color: #64748b;
+  margin-bottom: 0.4rem;
+}
+
+.simple-account-number {
+  display: block;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #3b82f6;
+  letter-spacing: 1px;
+}
+
+.simple-copy-btn {
+  width: 100%;
+  padding: 0.9rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #3b82f6;
+  background: #eff6ff;
+  border: 2px solid #3b82f6;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.simple-copy-btn:hover {
+  background: #3b82f6;
+  color: #fff;
+}
+
+
+/* ============================
+   프리미엄 다크 템플릿
+   ============================ */
+.web-payment-dark {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  background: #0f172a;
+  font-family: 'Noto Sans KR', sans-serif;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  overflow: hidden;
+}
+
+.dark-header {
+  position: relative;
+  text-align: center;
+  padding: 3rem 1.5rem 2rem;
+  overflow: hidden;
+}
+
+.dark-glow {
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(59,130,246,0.3) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.dark-header h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #e2e8f0;
+  letter-spacing: 4px;
+  margin: 0 0 0.3rem 0;
+  position: relative;
+}
+
+.dark-subtitle {
+  font-size: 0.9rem;
+  color: #64748b;
+  margin: 0;
+  position: relative;
+}
+
+.dark-body {
+  padding: 0 1.5rem 2rem;
+}
+
+.dark-card {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.dark-info-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 0;
+}
+
+.dark-label {
+  font-size: 0.85rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.dark-value {
+  font-size: 1rem;
+  color: #e2e8f0;
+  font-weight: 600;
+}
+
+.dark-account {
+  font-size: 1.2rem !important;
+  color: #60a5fa !important;
+  letter-spacing: 1px;
+}
+
+.dark-divider {
+  height: 1px;
+  background: #334155;
+  margin: 0.3rem 0;
+}
+
+.dark-copy-btn {
+  width: 100%;
+  padding: 0.9rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+
+.dark-copy-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+.dark-app-section {
+  margin-top: 1rem;
+}
+
+.dark-app-icon {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+}
