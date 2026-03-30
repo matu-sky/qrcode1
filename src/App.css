@@ -546,40 +546,200 @@ html, body {
 
 
 /* ============================
-   RESPONSIVE
+   RESPONSIVE - TABLET
+   ============================ */
+@media (max-width: 992px) {
+  .preset-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.6rem;
+  }
+
+  .preset-preview {
+    width: 70px;
+    height: 70px;
+  }
+
+  .preset-preview canvas, .preset-preview svg {
+    width: 70px !important;
+    height: 70px !important;
+  }
+}
+
+
+/* ============================
+   RESPONSIVE - MOBILE
    ============================ */
 @media (max-width: 768px) {
-  .hero-section { padding: 4rem 0 3.5rem; }
-  .hero-title { font-size: 2rem; }
-  .hero-subtitle { font-size: 1rem; }
-  .hero-stats { gap: 1.2rem; }
-  .stat-number { font-size: 1.2rem; }
+  /* Hero */
+  .hero-section { padding: 3rem 0 2.5rem; }
+  .hero-title { font-size: 1.8rem; }
+  .hero-subtitle { font-size: 0.95rem; margin-bottom: 2rem; }
+  .hero-badge { font-size: 0.78rem; padding: 0.3rem 1rem; }
+  .hero-buttons { margin-bottom: 2.5rem; }
+  .hero-cta-primary, .hero-cta-secondary {
+    padding: 0.7rem 1.5rem !important;
+    font-size: 0.95rem !important;
+  }
+  .hero-stats { gap: 1rem; }
+  .stat-number { font-size: 1.1rem; }
+  .stat-label { font-size: 0.72rem; }
+  .stat-divider { height: 28px; }
 
+  /* Features */
+  .features-section { padding: 2.5rem 0; }
+  .section-title { font-size: 1.3rem; }
+  .section-subtitle { font-size: 0.9rem; margin-bottom: 2rem; }
   .features-grid {
-    grid-template-columns: 1fr;
-    max-width: 400px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.8rem;
+    max-width: 100%;
+    padding: 0 0.5rem;
   }
+  .feature-card {
+    padding: 1.2rem 1rem;
+    border-radius: 12px;
+  }
+  .feature-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+  .feature-title { font-size: 0.95rem; }
+  .feature-desc { font-size: 0.8rem; }
 
+  /* Generator */
+  .generator-section { padding: 1.5rem 0 2.5rem; }
   .main-container {
-    padding: 1.5rem;
+    padding: 1.2rem;
     margin: 0 0.5rem;
+    border-radius: 12px;
+  }
+  .main-header {
+    font-size: 1.3rem !important;
+    margin-bottom: 1.5rem !important;
   }
 
-  .generator-section { padding: 2rem 0 3rem; }
-  .features-section { padding: 3rem 0; }
-  .section-title { font-size: 1.4rem; }
+  /* Steps */
+  .main-container h5 {
+    font-size: 1rem !important;
+  }
 
+  /* Tabs */
+  .custom-tabs .nav-link {
+    padding: 0.6rem 0.7rem;
+    font-size: 0.82rem;
+  }
+
+  /* Preset Grid */
   .preset-grid {
     grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+  }
+  .preset-card {
+    padding: 0.4rem;
+    border-radius: 8px;
+  }
+  .preset-preview {
+    width: 64px;
+    height: 64px;
+    border-radius: 6px;
+  }
+  .preset-preview canvas, .preset-preview svg {
+    width: 64px !important;
+    height: 64px !important;
+  }
+  .preset-name {
+    font-size: 0.65rem;
   }
 
+  /* QR Code Area - 모바일에서 폼 아래로 이동 */
+  .qr-code-container {
+    min-height: auto;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+    border-radius: 12px;
+  }
+  .qr-code-container h4 {
+    font-size: 1.1rem;
+  }
+
+  /* Form */
+  .form-label { font-size: 0.85rem; }
+  .form-control, .form-select { font-size: 0.88rem; }
+
+  /* Navbar */
+  .navbar-brand-custom {
+    font-size: 1rem !important;
+  }
   .nav-right {
     margin-top: 0.5rem;
     padding-top: 0.5rem;
     border-top: 1px solid var(--border-light);
   }
-
   .nav-user-email {
     max-width: 100%;
+    font-size: 0.78rem;
+  }
+
+  /* Footer */
+  .site-footer { padding: 2rem 0; }
+  .footer-brand { font-size: 1rem; }
+  .footer-copy { font-size: 0.8rem; }
+}
+
+
+/* ============================
+   RESPONSIVE - SMALL MOBILE
+   ============================ */
+@media (max-width: 480px) {
+  .hero-section { padding: 2.5rem 0 2rem; }
+  .hero-title { font-size: 1.5rem; }
+  .hero-subtitle { font-size: 0.88rem; }
+  .hero-cta-primary, .hero-cta-secondary {
+    padding: 0.65rem 1.2rem !important;
+    font-size: 0.88rem !important;
+    width: 100%;
+    justify-content: center;
+  }
+  .hero-buttons {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0 1rem;
+  }
+
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem;
+  }
+  .feature-card { padding: 1rem 0.8rem; }
+  .feature-icon { font-size: 1.6rem; }
+  .feature-title { font-size: 0.85rem; }
+  .feature-desc { font-size: 0.75rem; line-height: 1.4; }
+
+  .main-container {
+    padding: 1rem;
+    margin: 0 0.3rem;
+  }
+
+  .custom-tabs .nav-link {
+    padding: 0.5rem 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .preset-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.4rem;
+  }
+  .preset-card { padding: 0.3rem; }
+  .preset-preview {
+    width: 56px;
+    height: 56px;
+  }
+  .preset-preview canvas, .preset-preview svg {
+    width: 56px !important;
+    height: 56px !important;
+  }
+  .preset-name { font-size: 0.6rem; }
+
+  .brand-icon {
+    width: 24px;
+    height: 24px;
+    font-size: 0.7rem;
   }
 }
