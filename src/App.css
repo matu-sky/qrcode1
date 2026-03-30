@@ -1,6 +1,10 @@
 /* ============================
    CSS VARIABLES (공통 디자인 토큰)
    ============================ */
+/* 모바일 좌우 스크롤 방지 */
+html, body {
+  overflow-x: hidden;
+}
 :root {
   --primary: #3b82f6;
   --primary-dark: #2563eb;
