@@ -134,15 +134,27 @@ const QrStyleCustomizer = ({
 );
 
 // Sub-component for template selection
-const TemplateSelector = ({ selected, onChange }: { selected: string, onChange: (val: string) => void }) => (
+const TemplateSelector = ({ selected, onChange, type }: { selected: string, onChange: (val: string) => void, type?: string }) => (
   <Form.Group className="mt-4">
     <Form.Label>표시 템플릿 선택</Form.Label>
     <div className="d-flex flex-wrap gap-3">
-      <Form.Check type="radio" label="웹 페이지" name="template" value="web-payment" checked={selected === 'web-payment'} onChange={(e) => onChange(e.target.value)} />
-      <Form.Check type="radio" label="계좌 정보" name="template" value="bank-info-card" checked={selected === 'bank-info-card'} onChange={(e) => onChange(e.target.value)} />
-      <Form.Check type="radio" label="메모" name="template" value="memo" checked={selected === 'memo'} onChange={(e) => onChange(e.target.value)} />
-      <Form.Check type="radio" label="포스트잇" name="template" value="sticky-note" checked={selected === 'sticky-note'} onChange={(e) => onChange(e.target.value)} />
-      <Form.Check type="radio" label="영수증" name="template" value="receipt" checked={selected === 'receipt'} onChange={(e) => onChange(e.target.value)} />
+      {type === 'payment' ? (
+        <>
+          <Form.Check type="radio" label="모던 카드" name="template" value="web-payment" checked={selected === 'web-payment'} onChange={(e) => onChange(e.target.value)} />
+          <Form.Check type="radio" label="심플 화이트" name="template" value="web-payment-simple" checked={selected === 'web-payment-simple'} onChange={(e) => onChange(e.target.value)} />
+          <Form.Check type="radio" label="프리미엄 다크" name="template" value="web-payment-dark" checked={selected === 'web-payment-dark'} onChange={(e) => onChange(e.target.value)} />
+          <Form.Check type="radio" label="계좌 정보" name="template" value="bank-info-card" checked={selected === 'bank-info-card'} onChange={(e) => onChange(e.target.value)} />
+          <Form.Check type="radio" label="영수증" name="template" value="receipt" checked={selected === 'receipt'} onChange={(e) => onChange(e.target.value)} />
+        </>
+      ) : (
+        <>
+          <Form.Check type="radio" label="웹 페이지" name="template" value="web-payment" checked={selected === 'web-payment'} onChange={(e) => onChange(e.target.value)} />
+          <Form.Check type="radio" label="계좌 정보" name="template" value="bank-info-card" checked={selected === 'bank-info-card'} onChange={(e) => onChange(e.target.value)} />
+          <Form.Check type="radio" label="메모" name="template" value="memo" checked={selected === 'memo'} onChange={(e) => onChange(e.target.value)} />
+          <Form.Check type="radio" label="포스트잇" name="template" value="sticky-note" checked={selected === 'sticky-note'} onChange={(e) => onChange(e.target.value)} />
+          <Form.Check type="radio" label="영수증" name="template" value="receipt" checked={selected === 'receipt'} onChange={(e) => onChange(e.target.value)} />
+        </>
+      )}
     </div>
   </Form.Group>
 );
@@ -343,7 +355,7 @@ export default function HomePage() {
         params.set('bank', payment.bank); params.set('accountNumber', payment.accountNumber);
         if (payment.accountHolder) params.set('accountHolder', payment.accountHolder);
         if (payment.amount) params.set('amount', payment.amount);
-        if (template === 'web-payment' && backgroundUrl) { params.set('bg', backgroundUrl); }
+        if ((template === 'web-payment' || template === 'web-payment-simple' || template === 'web-payment-dark') && backgroundUrl) { params.set('bg', backgroundUrl); }
         setFinalQrValue(`${displayUrl}?${params.toString()}`); break;
       }
       case 'sms': {
@@ -492,8 +504,8 @@ return (
                     <Form.Group className="mb-2"><Form.Label>계좌번호</Form.Label><Form.Control type="text" name="accountNumber" placeholder="110-XXX-XXXXXX" value={payment.accountNumber} onChange={(e) => setPayment({...payment, accountNumber: e.target.value})} /></Form.Group>
                     <Form.Group className="mb-2"><Form.Label>예금주</Form.Label><Form.Control type="text" name="accountHolder" placeholder="홍길동" value={payment.accountHolder} onChange={(e) => setPayment({...payment, accountHolder: e.target.value})} /></Form.Group>
                     <Form.Group className="mb-2"><Form.Label>금액 (선택 사항)</Form.Label><Form.Control type="number" name="amount" placeholder="10000" value={payment.amount} onChange={(e) => setPayment({...payment, amount: e.target.value})} /></Form.Group>
-                    <TemplateSelector selected={template} onChange={setTemplate} />
-                    {template === 'web-payment' && 
+                    <TemplateSelector selected={template} onChange={setTemplate} type="payment" />
+                    {(template === 'web-payment' || template === 'web-payment-simple' || template === 'web-payment-dark') && 
                       <Form.Group className="mt-3"><Form.Label>배경 이미지 URL (선택 사항)</Form.Label><Form.Control type="url" placeholder="https://example.com/image.png" value={backgroundUrl} onChange={(e) => setBackgroundUrl(e.target.value)} /></Form.Group>
                     }
                     <MemoCustomizer memo={memo} setMemo={setMemo} color={memoColor} setColor={setMemoColor} size={memoSize} setSize={setMemoSize} />
