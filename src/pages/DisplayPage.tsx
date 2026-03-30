@@ -23,9 +23,9 @@ const bankApps = [
   {
     name: 'NH농협',
     logo: 'https://top2020.dothome.co.kr/builder/summernote/1760429603_80d243fc05826e1c0269.png',
-    scheme: 'nhallonebank://',
-    androidPackage: 'com.nonghyup.nhallonebank',
-    iosId: '1177327498',
+    scheme: 'newnhsmartbanking://',
+    androidPackage: 'nh.smart.banking',
+    iosId: '1444712671',
   },
 ];
 
