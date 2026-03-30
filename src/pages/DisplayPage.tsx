@@ -2,9 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Button, Spinner, Accordion } from 'react-bootstrap';
-// import { usePrompt } from '../hooks/usePrompt';
 import { supabase } from '../supabaseClient';
-import './DisplayPage.css'; // Import the CSS
+import './DisplayPage.css';
 
 const bankApps = [
   {
@@ -33,8 +32,8 @@ const bankApps = [
 export default function DisplayPage() {
   const [searchParams] = useSearchParams();
   const [copied, setCopied] = useState(false);
-  const [priceType, setPriceType] = useState('dineIn'); // 'dineIn' or 'takeout'
-  const [view, setView] = useState('welcome'); // 'welcome' or 'menu'
+  const [priceType, setPriceType] = useState('dineIn');
+  const [view, setView] = useState('welcome');
   
   const [menuData, setMenuData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -61,21 +60,15 @@ export default function DisplayPage() {
     }
   };
 
-  // Get template and content type from URL
   const template = searchParams.get('template') || 'memo';
   const type = searchParams.get('type') || 'text';
   const menuId = searchParams.get('id');
-
-  // Common data
   const text = searchParams.get('text');
-
-  // Payment data
   const bank = searchParams.get('bank');
   const accountNumber = searchParams.get('accountNumber');
   const accountHolder = searchParams.get('accountHolder');
   const backgroundUrl = searchParams.get('bg');
 
-  // vCard data
   const vCardData = {
     name: searchParams.get('name'),
     title: searchParams.get('title'),
@@ -87,11 +80,6 @@ export default function DisplayPage() {
     website: searchParams.get('website'),
     address: searchParams.get('address'),
   };
-
-  // usePrompt({
-  //   when: type === 'vcard' && !vCardSaved,
-  //   message: '연락처를 저장하지 않으면 정보가 사라집니다. 정말로 나가시겠습니까?',
-  // });
 
   useEffect(() => {
     if (type === 'menu' && menuId) {
@@ -108,13 +96,12 @@ export default function DisplayPage() {
           setError('메뉴 정보를 불러오는 데 실패했습니다.');
           setMenuData(null);
         } else if (data) {
-          setMenuData(data.data); // The menu content is in the 'data' jsonb column
+          setMenuData(data.data);
         } else {
           setError('해당 메뉴를 찾을 수 없습니다.');
         }
         setLoading(false);
       };
-
       fetchMenuData();
     } else if (type !== 'menu') {
       setLoading(false);
@@ -124,12 +111,10 @@ export default function DisplayPage() {
   const handleCopy = (copyText: string | null) => {
     if (!copyText) return;
     navigator.clipboard.writeText(copyText).then(() => {
-        setCopied(true);
-        setTimeout(() => {
-            setCopied(false);
-        }, 2000);
+      setCopied(true);
+      setTimeout(() => { setCopied(false); }, 2000);
     }).catch(err => {
-        console.error('Failed to copy: ', err);
+      console.error('Failed to copy: ', err);
     });
   };
 
@@ -160,48 +145,136 @@ export default function DisplayPage() {
   const handlePriceSelection = (type: string) => {
     setPriceType(type);
     setView('menu');
-  }
+  };
+
+// ===== 계좌이체 웹 템플릿 렌더링 =====
+  const renderBankAppGrid = () => (
+    <>
+      <div className="divider">앱으로 송금하기</div>
+      <div className="app-grid">
+        {bankApps.map(app => (
+          <div className="app-link" key={app.name} onClick={() => handleOpenBankApp(app)} style={{ cursor: 'pointer' }}>
+            <div className="app-icon">
+              {app.logo ? <img src={app.logo} alt={app.name} /> : <strong>{app.name}</strong>}
+            </div>
+            <span>{app.name}</span>
+          </div>
+        ))}
+      </div>
+    </>
+  );
 
   const renderWebPaymentPage = () => {
     const fullAccountNumber = `${bank} ${accountNumber}`;
     return (
-        <div className="web-payment">
-            <div 
-                className="header-image" 
-                style={{ backgroundImage: `url(${backgroundUrl || '/payment-header.png'})` }}
-            ></div>
-            <div className="content">
-                <div className="account-info">
-                    <h2>예금주</h2>
-                    <p className="bank-name">{accountHolder}</p>
-                    <h2>계좌번호</h2>
-                    <p className="account-number">{fullAccountNumber}</p>
-                </div>
-                <button className="copy-button" onClick={() => handleCopy(fullAccountNumber)}>
-                    {copied ? '복사 완료!' : '계좌번호 복사하기'}
-                </button>
-                <p style={{ fontSize: '0.85rem', color: '#e74c3c', marginTop: '0.5rem', textAlign: 'center', fontWeight: 600 }}>
-                    계좌번호 복사 후 앱을 이용하세요
-                </p>
-
-                <div className="divider">앱으로 송금하기</div>
-
-                <div className="app-grid">
-                    {bankApps.map(app => (
-                        <div className="app-link" key={app.name} onClick={() => handleOpenBankApp(app)} style={{ cursor: 'pointer' }}>
-                            <div className="app-icon">
-                                {app.logo ? <img src={app.logo} alt={app.name} /> : <strong>{app.name}</strong>}
-                            </div>
-                            <span>{app.name}</span>
-                        </div>
-                    ))}
-                </div>
-            </div>
+      <div className="web-payment">
+        <div 
+          className="header-image" 
+          style={{ backgroundImage: `url(${backgroundUrl || '/payment-header.png'})` }}
+        ></div>
+        <div className="content">
+          <div className="account-info">
+            <h2>예금주</h2>
+            <p className="bank-name">{accountHolder}</p>
+            <h2>계좌번호</h2>
+            <p className="account-number">{fullAccountNumber}</p>
+          </div>
+          <button className="copy-button" onClick={() => handleCopy(fullAccountNumber)}>
+            {copied ? '복사 완료!' : '계좌번호 복사하기'}
+          </button>
+          <p style={{ fontSize: '0.85rem', color: '#e74c3c', marginTop: '0.5rem', textAlign: 'center', fontWeight: 600 }}>
+            계좌번호 복사 후 앱을 이용하세요
+          </p>
+          {renderBankAppGrid()}
         </div>
+      </div>
     );
-  }
+  };
 
-  const renderContent = () => {
+  const renderSimplePaymentPage = () => {
+    const fullAccountNumber = `${bank} ${accountNumber}`;
+    return (
+      <div className="web-payment-simple">
+        <div className="simple-header">
+          <div className="simple-icon">💸</div>
+          <h1>송금 안내</h1>
+        </div>
+        <div className="simple-body">
+          <div className="simple-info-row">
+            <span className="simple-label">예금주</span>
+            <span className="simple-value">{accountHolder}</span>
+          </div>
+          <div className="simple-info-row">
+            <span className="simple-label">은행</span>
+            <span className="simple-value">{bank}</span>
+          </div>
+          <div className="simple-account-box">
+            <span className="simple-account-label">계좌번호</span>
+            <span className="simple-account-number">{accountNumber}</span>
+          </div>
+          <button className="simple-copy-btn" onClick={() => handleCopy(fullAccountNumber)}>
+            {copied ? '✅ 복사 완료!' : '📋 계좌번호 복사하기'}
+          </button>
+          <p style={{ fontSize: '0.82rem', color: '#e74c3c', marginTop: '0.5rem', textAlign: 'center', fontWeight: 600 }}>
+            계좌번호 복사 후 앱을 이용하세요
+          </p>
+          {renderBankAppGrid()}
+        </div>
+      </div>
+    );
+  };
+
+  const renderDarkPaymentPage = () => {
+    const fullAccountNumber = `${bank} ${accountNumber}`;
+    return (
+      <div className="web-payment-dark">
+        <div className="dark-header">
+          <div className="dark-glow"></div>
+          <h1>PAYMENT</h1>
+          <p className="dark-subtitle">송금 정보</p>
+        </div>
+        <div className="dark-body">
+          <div className="dark-card">
+            <div className="dark-info-group">
+              <span className="dark-label">예금주</span>
+              <span className="dark-value">{accountHolder}</span>
+            </div>
+            <div className="dark-divider"></div>
+            <div className="dark-info-group">
+              <span className="dark-label">은행</span>
+              <span className="dark-value">{bank}</span>
+            </div>
+            <div className="dark-divider"></div>
+            <div className="dark-info-group">
+              <span className="dark-label">계좌번호</span>
+              <span className="dark-value dark-account">{accountNumber}</span>
+            </div>
+          </div>
+          <button className="dark-copy-btn" onClick={() => handleCopy(fullAccountNumber)}>
+            {copied ? '복사 완료!' : '계좌번호 복사하기'}
+          </button>
+          <p style={{ fontSize: '0.82rem', color: '#ff6b6b', marginTop: '0.5rem', textAlign: 'center', fontWeight: 600 }}>
+            계좌번호 복사 후 앱을 이용하세요
+          </p>
+          <div className="dark-app-section">
+            <div className="divider" style={{ color: '#888' }}>앱으로 송금하기</div>
+            <div className="app-grid">
+              {bankApps.map(app => (
+                <div className="app-link" key={app.name} onClick={() => handleOpenBankApp(app)} style={{ cursor: 'pointer' }}>
+                  <div className="app-icon dark-app-icon">
+                    {app.logo ? <img src={app.logo} alt={app.name} /> : <strong>{app.name}</strong>}
+                  </div>
+                  <span style={{ color: '#ccc' }}>{app.name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+const renderContent = () => {
     if (loading) {
       return <div className="text-center p-5"><Spinner animation="border" /></div>;
     }
@@ -211,7 +284,15 @@ export default function DisplayPage() {
     }
 
     if (type === 'payment' && template === 'web-payment') {
-        return renderWebPaymentPage();
+      return renderWebPaymentPage();
+    }
+
+    if (type === 'payment' && template === 'web-payment-simple') {
+      return renderSimplePaymentPage();
+    }
+
+    if (type === 'payment' && template === 'web-payment-dark') {
+      return renderDarkPaymentPage();
     }
 
     if (type === 'menu') {
@@ -220,20 +301,19 @@ export default function DisplayPage() {
       if (view === 'welcome') {
         return (
           <div className="welcome-container">
-              <header className="menu-header welcome-header">
-                  {menuData.shopLogoUrl && <img src={menuData.shopLogoUrl} alt={`${menuData.shopName} Logo`} className="shop-logo" />} 
-                  <h1>{menuData.shopName}</h1>
-                  {menuData.shopDescription && <p>{menuData.shopDescription}</p>}
-              </header>
-              <div className="choice-buttons d-grid gap-2">
-                  <Button style={{borderRadius: 0}} variant="primary" size="lg" onClick={() => handlePriceSelection('dineIn')}>매장에서 먹고 갈래요</Button>
-                  <Button style={{borderRadius: 0}} variant="outline-primary" size="lg" onClick={() => handlePriceSelection('takeout')}>포장해서 갈래요</Button>
-              </div>
+            <header className="menu-header welcome-header">
+              {menuData.shopLogoUrl && <img src={menuData.shopLogoUrl} alt={`${menuData.shopName} Logo`} className="shop-logo" />} 
+              <h1>{menuData.shopName}</h1>
+              {menuData.shopDescription && <p>{menuData.shopDescription}</p>}
+            </header>
+            <div className="choice-buttons d-grid gap-2">
+              <Button style={{borderRadius: 0}} variant="primary" size="lg" onClick={() => handlePriceSelection('dineIn')}>매장에서 먹고 갈래요</Button>
+              <Button style={{borderRadius: 0}} variant="outline-primary" size="lg" onClick={() => handlePriceSelection('takeout')}>포장해서 갈래요</Button>
+            </div>
           </div>
         );
       }
 
-      // view === 'menu'
       return (
         <div className="menu-content">
           <header className="menu-header menu-view-header">
@@ -242,9 +322,7 @@ export default function DisplayPage() {
               {menuData.shopLogoUrl && <img src={menuData.shopLogoUrl} alt={`${menuData.shopName} Logo`} className="shop-logo small" />} 
               <h1>{menuData.shopName}</h1>
             </div>
-            <p className="price-type-subtitle" style={{borderRadius: 0}}>({
-              priceType === 'dineIn' ? '매장' : '포장'
-            } 가격)</p>
+            <p className="price-type-subtitle" style={{borderRadius: 0}}>({priceType === 'dineIn' ? '매장' : '포장'} 가격)</p>
           </header>
 
           <Accordion flush>
@@ -318,7 +396,7 @@ export default function DisplayPage() {
   };
 
   const getContainerClass = () => {
-    if (type === 'payment' && template === 'web-payment') return 'web-payment-container';
+    if (type === 'payment' && (template === 'web-payment' || template === 'web-payment-simple' || template === 'web-payment-dark')) return 'web-payment-container';
     if (type === 'menu') return 'menu-template';
     return template;
   };
