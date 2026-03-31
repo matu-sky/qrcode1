@@ -1,242 +1,123 @@
-/* ============================
-   AUTH PAGE (로그인/회원가입)
-   ============================ */
-.auth-page {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, var(--dark) 0%, var(--dark-secondary) 100%);
-  position: relative;
-  overflow: hidden;
-  padding: 2rem;
-}
+import React, { useState } from 'react';
+import { supabase } from '../supabaseClient';
+import { Form, Button, Alert } from 'react-bootstrap';
+import { useNavigate, Link } from 'react-router-dom';
 
-.auth-bg-pattern {
-  position: absolute;
-  inset: 0;
-  background-image:
-    radial-gradient(circle at 20% 50%, rgba(59,130,246,0.15) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(139,92,246,0.1) 0%, transparent 50%);
-  pointer-events: none;
-}
+export default function AuthPage() {
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
+  const navigate = useNavigate();
 
-.auth-container {
-  position: relative;
-  display: flex;
-  background: var(--bg-white);
-  border-radius: 20px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  overflow: hidden;
-  max-width: 880px;
-  width: 100%;
-}
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    setMessage(null);
 
-.auth-brand {
-  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-  padding: 3rem;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  color: #fff;
-}
+    try {
+      if (isSignUp) {
+        const { error } = await supabase.auth.signUp({ email, password });
+        if (error) throw error;
+        setMessage('회원가입이 완료되었습니다. 이메일을 확인하여 계정을 활성화해주세요.');
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        navigate('/');
+      }
+    } catch (error: any) {
+      setError(error.error_description || error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-.auth-brand-link {
-  text-decoration: none;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-  margin-bottom: 1.5rem;
-}
+  return (
+    <div className="auth-page">
+      <div className="auth-bg-pattern"></div>
+      
+      <div className="auth-container">
+        {/* 왼쪽: 브랜드 영역 */}
+        <div className="auth-brand">
+          <Link to="/" className="auth-brand-link">
+            <div className="auth-brand-icon">◻</div>
+            <h1>QR 코드 생성기</h1>
+          </Link>
+          <p className="auth-brand-desc">
+            URL, 명함, Wi-Fi, 계좌이체, 메뉴판까지<br />
+            다양한 QR 코드를 무료로 만들어 보세요.
+          </p>
+          <div className="auth-brand-features">
+            <div className="auth-feature-item">
+              <span className="auth-feature-icon">✨</span>
+              <span>12가지 디자인 프리셋</span>
+            </div>
+            <div className="auth-feature-item">
+              <span className="auth-feature-icon">🍽️</span>
+              <span>디지털 메뉴판 생성</span>
+            </div>
+            <div className="auth-feature-item">
+              <span className="auth-feature-icon">💾</span>
+              <span>메뉴 저장 및 관리</span>
+            </div>
+          </div>
+        </div>
 
-.auth-brand-icon {
-  width: 36px;
-  height: 36px;
-  background: rgba(255,255,255,0.2);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1rem;
-  font-weight: 700;
-}
+        {/* 오른쪽: 로그인 폼 */}
+        <div className="auth-form-wrapper">
+          <h2 className="auth-form-title">{isSignUp ? '회원가입' : '로그인'}</h2>
+          <p className="auth-form-subtitle">
+            {isSignUp ? '계정을 만들어 메뉴판을 저장하세요.' : '계정에 로그인하여 메뉴를 관리하세요.'}
+          </p>
 
-.auth-brand h1 {
-  font-size: 1.4rem;
-  font-weight: 700;
-  margin: 0;
-}
+          {error && <Alert variant="danger" className="auth-alert">{error}</Alert>}
+          {message && <Alert variant="success" className="auth-alert">{message}</Alert>}
 
-.auth-brand-desc {
-  font-size: 0.92rem;
-  color: rgba(255,255,255,0.8);
-  line-height: 1.6;
-  margin-bottom: 2rem;
-}
+          <Form onSubmit={handleSubmit}>
+            <Form.Group className="mb-3">
+              <Form.Label className="auth-label">이메일 주소</Form.Label>
+              <Form.Control
+                type="email"
+                placeholder="name@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="auth-input"
+              />
+            </Form.Group>
 
-.auth-brand-features {
-  display: flex;
-  flex-direction: column;
-  gap: 0.8rem;
-}
+            <Form.Group className="mb-4">
+              <Form.Label className="auth-label">비밀번호</Form.Label>
+              <Form.Control
+                type="password"
+                placeholder="6자 이상 입력하세요"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="auth-input"
+              />
+            </Form.Group>
 
-.auth-feature-item {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  font-size: 0.9rem;
-  color: rgba(255,255,255,0.9);
-}
+            <Button disabled={loading} className="auth-submit-btn" type="submit">
+              {loading ? '처리 중...' : (isSignUp ? '회원가입' : '로그인')}
+            </Button>
+          </Form>
 
-.auth-feature-icon {
-  font-size: 1.1rem;
-}
+          <div className="auth-switch">
+            <span className="auth-switch-text">
+              {isSignUp ? '이미 계정이 있으신가요?' : '계정이 없으신가요?'}
+            </span>
+            <button className="auth-switch-btn" onClick={() => { setIsSignUp(!isSignUp); setError(null); setMessage(null); }}>
+              {isSignUp ? '로그인' : '회원가입'}
+            </button>
+          </div>
 
-.auth-form-wrapper {
-  flex: 1;
-  padding: 3rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.auth-form-title {
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 0.3rem;
-}
-
-.auth-form-subtitle {
-  font-size: 0.9rem;
-  color: var(--text-muted);
-  margin-bottom: 1.8rem;
-}
-
-.auth-alert {
-  font-size: 0.85rem;
-  border-radius: var(--radius-sm);
-}
-
-.auth-label {
-  font-size: 0.88rem;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.auth-input {
-  padding: 0.7rem 0.9rem !important;
-  border-radius: var(--radius-sm) !important;
-  font-size: 0.92rem !important;
-  border: 1.5px solid var(--border) !important;
-  transition: var(--transition);
-}
-
-.auth-input:focus {
-  border-color: var(--primary) !important;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12) !important;
-}
-
-.auth-submit-btn {
-  width: 100%;
-  padding: 0.75rem !important;
-  font-size: 1rem !important;
-  font-weight: 600 !important;
-  background: var(--primary) !important;
-  border: none !important;
-  border-radius: var(--radius-sm) !important;
-  transition: var(--transition) !important;
-}
-
-.auth-submit-btn:hover {
-  background: var(--primary-dark) !important;
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-primary);
-}
-
-.auth-submit-btn:disabled {
-  opacity: 0.7;
-  transform: none !important;
-}
-
-.auth-switch {
-  text-align: center;
-  margin-top: 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-}
-
-.auth-switch-text {
-  font-size: 0.88rem;
-  color: var(--text-muted);
-}
-
-.auth-switch-btn {
-  background: none;
-  border: none;
-  color: var(--primary);
-  font-weight: 600;
-  font-size: 0.88rem;
-  cursor: pointer;
-  padding: 0;
-  transition: var(--transition);
-}
-
-.auth-switch-btn:hover {
-  color: var(--primary-dark);
-  text-decoration: underline;
-}
-
-.auth-home-link {
-  display: block;
-  text-align: center;
-  margin-top: 1.2rem;
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  text-decoration: none;
-  transition: var(--transition);
-}
-
-.auth-home-link:hover {
-  color: var(--primary);
-}
-
-@media (max-width: 768px) {
-  .auth-page { padding: 1rem; }
-  .auth-container {
-    flex-direction: column;
-    max-width: 440px;
-  }
-  .auth-brand {
-    padding: 2rem;
-    text-align: center;
-    align-items: center;
-  }
-  .auth-brand-link { justify-content: center; }
-  .auth-brand-desc { text-align: center; }
-  .auth-brand-features {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.5rem;
-  }
-  .auth-feature-item {
-    font-size: 0.8rem;
-    background: rgba(255,255,255,0.1);
-    padding: 0.3rem 0.7rem;
-    border-radius: 20px;
-  }
-  .auth-form-wrapper { padding: 2rem; }
-  .auth-form-title { font-size: 1.3rem; }
-}
-
-@media (max-width: 480px) {
-  .auth-brand { padding: 1.5rem; }
-  .auth-brand h1 { font-size: 1.2rem; }
-  .auth-brand-desc { font-size: 0.82rem; margin-bottom: 1rem; }
-  .auth-form-wrapper { padding: 1.5rem; }
+          <Link to="/" className="auth-home-link">← 홈으로 돌아가기</Link>
+        </div>
+      </div>
+    </div>
+  );
 }
