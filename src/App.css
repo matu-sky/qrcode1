@@ -150,6 +150,34 @@ html, body {
   color: #475569;
 }
 
+[data-theme="dark"] .form-label,
+[data-theme="dark"] .fw-bold,
+[data-theme="dark"] .form-check-label {
+  color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] h5,
+[data-theme="dark"] .menu-section-title {
+  color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .form-text {
+  color: #64748b !important;
+}
+
+[data-theme="dark"] .preset-card {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+[data-theme="dark"] .qr-code-placeholder {
+  color: #94a3b8;
+}
+
+[data-theme="dark"] .qr-code-container h4 {
+  color: #e2e8f0;
+}
+
 [data-theme="dark"] .menu-section-card {
   background: #0f172a;
   border-color: var(--border);
