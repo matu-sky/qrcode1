@@ -54,7 +54,7 @@ const QrStyleCustomizer = ({
   qrLogoUrl, setQrLogoUrl, dotType, setDotType, cornerSquareType, setCornerSquareType,
   cornerDotType, setCornerDotType, useGradient, setUseGradient, gradientColor, setGradientColor
 }: any) => (
-  <Form.Group className="mt-3 p-3 border rounded" style={{ backgroundColor: '#f0f4ff' }}>
+  <Form.Group className="mt-3 p-3 border rounded style-customizer-card">
     <Form.Label className="fw-bold">세부 디자인 조정</Form.Label>
     <Row className="mb-2">
       <Col>
