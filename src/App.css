@@ -178,6 +178,20 @@ html, body {
   color: #e2e8f0;
 }
 
+[data-theme="dark"] .bg-light {
+  background-color: #0f172a !important;
+  border-color: #334155 !important;
+}
+
+[data-theme="dark"] .border {
+  border-color: #334155 !important;
+}
+
+[data-theme="dark"] [style*="background-color: rgb(240, 244, 255)"],
+[data-theme="dark"] [style*="backgroundColor"] {
+  background-color: #0f172a !important;
+}
+
 [data-theme="dark"] .menu-section-card {
   background: #0f172a;
   border-color: var(--border);
