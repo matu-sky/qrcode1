@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../supabaseClient';
@@ -8,6 +8,14 @@ export default function AppNavbar() {
   const { session } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const [darkMode, setDarkMode] = useState(() => {
+    return localStorage.getItem('theme') === 'dark';
+  });
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+    localStorage.setItem('theme', darkMode ? 'dark' : 'light');
+  }, [darkMode]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -49,6 +57,13 @@ export default function AppNavbar() {
             )}
           </Nav>
           <Nav className="nav-right">
+            <button
+              className="theme-toggle"
+              onClick={() => setDarkMode(!darkMode)}
+              title={darkMode ? '라이트 모드' : '다크 모드'}
+            >
+              {darkMode ? '☀️' : '🌙'}
+            </button>
             {session ? (
               <>
                 <span className="nav-user-email">{session.user.email}</span>
