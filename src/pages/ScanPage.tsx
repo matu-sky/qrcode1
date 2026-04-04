@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Container, Tabs, Tab, Button, Spinner } from 'react-bootstrap';
+import React, { useState, useRef } from 'react';
+import { Container, Button } from 'react-bootstrap';
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 import AppNavbar from '../components/Navbar';
 
@@ -53,111 +53,12 @@ function detectType(text: string): ScanResult {
 }
 
 export default function ScanPage() {
-  const [activeTab, setActiveTab] = useState<string>('camera');
   const [result, setResult] = useState<ScanResult | null>(null);
-  const [isScanning, setIsScanning] = useState(false);
   const [error, setError] = useState<string>('');
   const [copied, setCopied] = useState(false);
-  const [cameraStarting, setCameraStarting] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
 
-  const html5QrCodeRef = useRef<Html5Qrcode | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const scannerContainerId = 'qr-reader';
-
-  const startCamera = async () => {
-    setError('');
-    setResult(null);
-    setCameraStarting(true);
-
-    try {
-      if (html5QrCodeRef.current) {
-        try {
-          const state = html5QrCodeRef.current.getState();
-          if (state === 2) {
-            await html5QrCodeRef.current.stop();
-          }
-        } catch (e) {}
-        try { html5QrCodeRef.current.clear(); } catch (e) {}
-        html5QrCodeRef.current = null;
-      }
-
-      const html5QrCode = new Html5Qrcode(scannerContainerId, {
-        formatsToSupport: [
-          Html5QrcodeSupportedFormats.QR_CODE,
-        ],
-        verbose: false,
-      });
-      html5QrCodeRef.current = html5QrCode;
-
-      const devices = await Html5Qrcode.getCameras();
-      if (!devices || devices.length === 0) {
-        setError('카메라를 찾을 수 없습니다.');
-        setCameraStarting(false);
-        return;
-      }
-
-      // 후면 카메라 찾기
-      const backCamera = devices.find(
-        (d) =>
-          d.label.toLowerCase().includes('back') ||
-          d.label.toLowerCase().includes('rear') ||
-          d.label.toLowerCase().includes('환경') ||
-          d.label.toLowerCase().includes('후면')
-      );
-      const cameraId = backCamera ? backCamera.id : devices[devices.length - 1].id;
-
-      await html5QrCode.start(
-        cameraId,
-        {
-          fps: 20,
-          qrbox: function(viewfinderWidth: number, viewfinderHeight: number) {
-            const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
-            const size = Math.floor(minEdge * 0.8);
-            return { width: size, height: size };
-          },
-          disableFlip: false,
-        },
-        (decodedText) => {
-          const scanResult = detectType(decodedText);
-          setResult(scanResult);
-          html5QrCode.stop().then(() => {
-            try { html5QrCode.clear(); } catch (e) {}
-            setIsScanning(false);
-          }).catch(() => {
-            setIsScanning(false);
-          });
-        },
-        () => {}
-      );
-
-      setIsScanning(true);
-    } catch (err: any) {
-      console.error('Camera error:', err);
-      if (err?.toString().includes('NotAllowedError') || err?.toString().includes('Permission')) {
-        setError('카메라 접근 권한이 필요합니다. 브라우저 설정에서 카메라 권한을 허용해 주세요.');
-      } else if (err?.toString().includes('NotFoundError')) {
-        setError('카메라를 찾을 수 없습니다. 카메라가 연결되어 있는지 확인해 주세요.');
-      } else {
-        setError(`카메라 오류: ${err?.message || err?.toString() || '알 수 없는 오류'}`);
-      }
-    } finally {
-      setCameraStarting(false);
-    }
-  };
-
-  const stopCamera = async () => {
-    if (html5QrCodeRef.current) {
-      try {
-        const state = html5QrCodeRef.current.getState();
-        if (state === 2) {
-          await html5QrCodeRef.current.stop();
-        }
-      } catch (e) {}
-      try { html5QrCodeRef.current.clear(); } catch (e) {}
-      html5QrCodeRef.current = null;
-    }
-    setIsScanning(false);
-  };
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -165,6 +66,7 @@ export default function ScanPage() {
 
     setError('');
     setResult(null);
+    setIsProcessing(true);
 
     try {
       const html5QrCode = new Html5Qrcode('qr-file-reader', {
@@ -177,33 +79,12 @@ export default function ScanPage() {
       html5QrCode.clear();
     } catch (err) {
       setError('QR코드를 인식할 수 없습니다. 다른 이미지로 시도해 주세요.');
+    } finally {
+      setIsProcessing(false);
     }
 
     e.target.value = '';
   };
-
-  useEffect(() => {
-    if (activeTab !== 'camera') {
-      stopCamera();
-    }
-  }, [activeTab]);
-
-  useEffect(() => {
-    return () => {
-      if (html5QrCodeRef.current) {
-        try {
-          const state = html5QrCodeRef.current.getState();
-          if (state === 2) {
-            html5QrCodeRef.current.stop().then(() => {
-              try { html5QrCodeRef.current?.clear(); } catch (e) {}
-            });
-          } else {
-            try { html5QrCodeRef.current.clear(); } catch (e) {}
-          }
-        } catch (e) {}
-      }
-    };
-  }, []);
 
   const handleCopy = async (text: string) => {
     try {
@@ -241,9 +122,7 @@ export default function ScanPage() {
           <div className="scan-result-body">
             <p className="scan-result-text">{result.parsed.url}</p>
             <div className="scan-result-actions">
-              <Button className="scan-btn-primary" onClick={() => window.open(result.parsed.url, '_blank')}>
-                열기
-              </Button>
+              <Button className="scan-btn-primary" onClick={() => window.open(result.parsed.url, '_blank')}>열기</Button>
               <Button className="scan-btn-secondary" onClick={() => handleCopy(result.parsed.url)}>
                 {copied ? '✓ 복사됨' : '복사'}
               </Button>
@@ -353,9 +232,6 @@ export default function ScanPage() {
             onClick={() => {
               setResult(null);
               setError('');
-              if (activeTab === 'camera') {
-                startCamera();
-              }
             }}
           >
             다시 스캔하기
@@ -371,85 +247,36 @@ export default function ScanPage() {
       <section className="scan-page-section">
         <Container>
           <div className="scan-page-header">
-            <h2 className="scan-page-title">QR코드 스캔</h2>
-            <p className="scan-page-subtitle">카메라로 직접 스캔하거나, 갤러리에서 QR 이미지를 선택하세요</p>
+            <h2 className="scan-page-title">QR코드 이미지스캔</h2>
+            <p className="scan-page-subtitle">갤러리에서 QR코드 이미지를 선택하면 내용을 읽어드립니다</p>
           </div>
 
           <div className="scan-card">
-            <Tabs
-              activeKey={activeTab}
-              onSelect={(k) => setActiveTab(k || 'camera')}
-              className="scan-tabs"
-            >
-              <Tab eventKey="camera" title="📷 카메라 스캔">
-                <div className="scan-tab-content">
-                  {!isScanning && !result && (
-                    <div className="scan-start-area">
-                      <div className="scan-icon-large">📷</div>
-                      <p className="scan-guide-text">
-                        카메라로 QR코드를 스캔합니다.<br />
-                        QR코드를 네모 영역 안에 맞춰주세요.
-                      </p>
-                      <Button
-                        className="scan-btn-primary scan-btn-large"
-                        onClick={startCamera}
-                        disabled={cameraStarting}
-                      >
-                        {cameraStarting ? (
-                          <><Spinner animation="border" size="sm" className="me-2" />카메라 시작 중...</>
-                        ) : (
-                          '카메라 시작'
-                        )}
-                      </Button>
-                    </div>
-                  )}
+            <div className="scan-tab-content">
+              <div className="scan-start-area">
+                <div className="scan-icon-large">🖼️</div>
+                <p className="scan-guide-text">
+                  갤러리에서 QR코드 이미지를 선택하세요.<br />
+                  카톡이나 문자로 받은 QR 이미지도 가능합니다.
+                </p>
+                <Button
+                  className="scan-btn-primary scan-btn-large"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isProcessing}
+                >
+                  {isProcessing ? '인식 중...' : '사진 선택'}
+                </Button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                  onChange={handleFileSelect}
+                />
+              </div>
+            </div>
 
-                  <div
-                    id={scannerContainerId}
-                    className="scan-camera-view"
-                    style={{ display: isScanning ? 'block' : 'none' }}
-                  />
-
-                  {isScanning && !result && (
-                    <div className="scan-scanning-status">
-                      <Spinner animation="border" size="sm" className="me-2" />
-                      <span>QR코드를 찾고 있습니다...</span>
-                      <Button className="scan-btn-outline mt-3" onClick={stopCamera}>
-                        스캔 중지
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              </Tab>
-
-              <Tab eventKey="image" title="🖼️ 이미지 스캔">
-                <div className="scan-tab-content">
-                  {!result && (
-                    <div className="scan-start-area">
-                      <div className="scan-icon-large">🖼️</div>
-                      <p className="scan-guide-text">
-                        갤러리에서 QR코드 이미지를 선택하세요.<br />
-                        카톡이나 문자로 받은 QR 이미지도 가능합니다.
-                      </p>
-                      <Button
-                        className="scan-btn-primary scan-btn-large"
-                        onClick={() => fileInputRef.current?.click()}
-                      >
-                        사진 선택
-                      </Button>
-                      <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept="image/*"
-                        style={{ display: 'none' }}
-                        onChange={handleFileSelect}
-                      />
-                    </div>
-                  )}
-                  <div id="qr-file-reader" style={{ display: 'none' }} />
-                </div>
-              </Tab>
-            </Tabs>
+            <div id="qr-file-reader" style={{ display: 'none' }} />
 
             {error && (
               <div className="scan-error">
