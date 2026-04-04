@@ -104,9 +104,14 @@ export default function ScanPage() {
       await html5QrCode.start(
         { facingMode: 'environment' },
         {
-          fps: 10,
-          qrbox: { width: 250, height: 250 },
+          fps: 15,
+          qrbox: function(viewfinderWidth: number, viewfinderHeight: number) {
+            const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
+            const size = Math.floor(minEdge * 0.75);
+            return { width: size, height: size };
+          },
           aspectRatio: 1,
+          disableFlip: false,
         },
         (decodedText) => {
           const scanResult = detectType(decodedText);
