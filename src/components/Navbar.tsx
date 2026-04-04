@@ -51,7 +51,7 @@ export default function AppNavbar() {
               to="/scan"
               className={`nav-link-custom ${location.pathname === '/scan' ? 'nav-active' : ''}`}
             >
-              QR코드 스캔
+              QR코드 이미지스캔
             </Nav.Link>
             {session && (
               <Nav.Link
