@@ -1332,3 +1332,376 @@ html, body {
     font-size: 0.7rem;
   }
 }
+
+/* ============================
+   SCAN PAGE
+   ============================ */
+.scan-page-section {
+  min-height: calc(100vh - 120px);
+  padding: 2rem 0;
+  background: var(--bg-body);
+}
+
+.scan-page-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.scan-page-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.scan-page-subtitle {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.scan-card {
+  max-width: 500px;
+  margin: 0 auto;
+  background: var(--bg-white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+/* 스캔 탭 스타일 */
+.scan-tabs .nav-tabs {
+  border-bottom: 2px solid var(--border);
+  padding: 0;
+}
+
+.scan-tabs .nav-tabs .nav-link {
+  border: none;
+  border-radius: 0;
+  padding: 0.9rem 1.5rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  background: transparent;
+  transition: var(--transition);
+  flex: 1;
+  text-align: center;
+}
+
+.scan-tabs .nav-tabs .nav-link:hover {
+  color: var(--primary);
+  background: var(--primary-bg);
+}
+
+.scan-tabs .nav-tabs .nav-link.active {
+  color: var(--primary);
+  background: var(--bg-white);
+  border-bottom: 3px solid var(--primary);
+}
+
+.scan-tab-content {
+  padding: 2rem 1.5rem;
+}
+
+.scan-start-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+}
+
+.scan-icon-large {
+  font-size: 3.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.scan-guide-text {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+/* 카메라 뷰 */
+.scan-camera-view {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.scan-camera-view video {
+  width: 100% !important;
+  border-radius: var(--radius-md);
+}
+
+.scan-scanning-status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+/* 버튼 스타일 */
+.scan-btn-primary {
+  background: var(--primary) !important;
+  border: none !important;
+  color: #fff !important;
+  padding: 0.65rem 1.8rem !important;
+  border-radius: var(--radius-sm) !important;
+  font-weight: 600 !important;
+  font-size: 0.95rem !important;
+  transition: var(--transition) !important;
+}
+
+.scan-btn-primary:hover {
+  background: var(--primary-dark) !important;
+  box-shadow: var(--shadow-primary) !important;
+}
+
+.scan-btn-large {
+  padding: 0.8rem 2.5rem !important;
+  font-size: 1rem !important;
+}
+
+.scan-btn-secondary {
+  background: var(--bg-section) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text-primary) !important;
+  padding: 0.65rem 1.5rem !important;
+  border-radius: var(--radius-sm) !important;
+  font-weight: 500 !important;
+  font-size: 0.9rem !important;
+  transition: var(--transition) !important;
+}
+
+.scan-btn-secondary:hover {
+  background: var(--border-light) !important;
+}
+
+.scan-btn-outline {
+  background: transparent !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text-secondary) !important;
+  padding: 0.5rem 1.5rem !important;
+  border-radius: var(--radius-sm) !important;
+  font-weight: 500 !important;
+  font-size: 0.85rem !important;
+  transition: var(--transition) !important;
+}
+
+.scan-btn-outline:hover {
+  border-color: var(--primary) !important;
+  color: var(--primary) !important;
+}
+
+/* 에러 메시지 */
+.scan-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 1rem 1.5rem;
+  background: #fef2f2;
+  border-top: 1px solid #fecaca;
+  color: #dc2626;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.scan-error-icon {
+  flex-shrink: 0;
+}
+
+/* 스캔 결과 카드 */
+.scan-result-card {
+  padding: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.scan-result-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.scan-result-body {
+  padding: 0;
+}
+
+.scan-result-text {
+  background: var(--bg-section);
+  padding: 0.8rem 1rem;
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  word-break: break-all;
+  margin-bottom: 1rem;
+  border: 1px solid var(--border-light);
+}
+
+.scan-result-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/* 정보 그리드 (Wi-Fi, 명함, 계좌) */
+.scan-info-grid {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 0.5rem 1rem;
+  align-items: center;
+}
+
+.scan-info-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.scan-info-value {
+  font-size: 0.92rem;
+  color: var(--text-primary);
+  word-break: break-all;
+}
+
+.scan-again-wrapper {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-light);
+  text-align: center;
+}
+
+/* ===== 다크모드 대응 ===== */
+[data-theme="dark"] .scan-page-section {
+  background: var(--dark);
+}
+
+[data-theme="dark"] .scan-page-title {
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .scan-page-subtitle {
+  color: #94a3b8;
+}
+
+[data-theme="dark"] .scan-card {
+  background: var(--dark-secondary);
+  border: 1px solid #334155;
+}
+
+[data-theme="dark"] .scan-tabs .nav-tabs {
+  border-bottom-color: #334155;
+}
+
+[data-theme="dark"] .scan-tabs .nav-tabs .nav-link {
+  color: #94a3b8;
+}
+
+[data-theme="dark"] .scan-tabs .nav-tabs .nav-link:hover {
+  color: var(--primary-light);
+  background: rgba(59, 130, 246, 0.1);
+}
+
+[data-theme="dark"] .scan-tabs .nav-tabs .nav-link.active {
+  color: var(--primary-light);
+  background: var(--dark-secondary);
+  border-bottom-color: var(--primary-light);
+}
+
+[data-theme="dark"] .scan-guide-text {
+  color: #94a3b8;
+}
+
+[data-theme="dark"] .scan-btn-secondary {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .scan-btn-secondary:hover {
+  background: #334155 !important;
+}
+
+[data-theme="dark"] .scan-btn-outline {
+  border-color: #475569 !important;
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .scan-btn-outline:hover {
+  border-color: var(--primary-light) !important;
+  color: var(--primary-light) !important;
+}
+
+[data-theme="dark"] .scan-error {
+  background: #451a1a;
+  border-top-color: #7f1d1d;
+  color: #fca5a5;
+}
+
+[data-theme="dark"] .scan-result-card {
+  border-top-color: #334155;
+}
+
+[data-theme="dark"] .scan-result-title {
+  color: #e2e8f0;
+  border-bottom-color: #334155;
+}
+
+[data-theme="dark"] .scan-result-text {
+  background: #0f172a;
+  color: #e2e8f0;
+  border-color: #334155;
+}
+
+[data-theme="dark"] .scan-info-label {
+  color: #64748b;
+}
+
+[data-theme="dark"] .scan-info-value {
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .scan-again-wrapper {
+  border-top-color: #334155;
+}
+
+[data-theme="dark"] .scan-scanning-status {
+  color: #94a3b8;
+}
+
+/* 모바일 반응형 */
+@media (max-width: 576px) {
+  .scan-page-title {
+    font-size: 1.4rem;
+  }
+
+  .scan-tab-content {
+    padding: 1.5rem 1rem;
+  }
+
+  .scan-icon-large {
+    font-size: 2.8rem;
+  }
+
+  .scan-result-card {
+    padding: 1rem;
+  }
+
+  .scan-info-grid {
+    grid-template-columns: 70px 1fr;
+  }
+
+  .scan-result-actions {
+    flex-direction: column;
+  }
+
+  .scan-result-actions .scan-btn-primary,
+  .scan-result-actions .scan-btn-secondary {
+    width: 100%;
+  }
+}
