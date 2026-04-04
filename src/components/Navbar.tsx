@@ -46,6 +46,13 @@ export default function AppNavbar() {
             >
               메뉴판 생성
             </Nav.Link>
+            <Nav.Link
+              as={Link}
+              to="/scan"
+              className={`nav-link-custom ${location.pathname === '/scan' ? 'nav-active' : ''}`}
+            >
+              QR코드 스캔
+            </Nav.Link>
             {session && (
               <Nav.Link
                 as={Link}
