@@ -244,6 +244,30 @@ export default function HomePage() {
     setCornerDotType(preset.cornerDotType);
     setUseGradient(preset.useGradient);
     setGradientColor(preset.gradientColor);
+
+    // 이미 QR이 생성된 상태면 자동으로 디자인 업데이트
+    if (finalQrValue && qrCodeInstance.current && qrCanvasRef.current) {
+      const dotsOptions: any = { type: preset.dotType };
+      if (preset.useGradient) {
+        dotsOptions.gradient = {
+          type: 'linear', rotation: Math.PI / 4,
+          colorStops: [{ offset: 0, color: preset.fgColor }, { offset: 1, color: preset.gradientColor }],
+        };
+      } else {
+        dotsOptions.color = preset.fgColor;
+      }
+
+      qrCodeInstance.current.update({
+        width: qrSize, height: qrSize,
+        data: finalQrValue,
+        dotsOptions,
+        backgroundOptions: { color: preset.bgColor },
+        cornersSquareOptions: { type: preset.cornerSquareType, color: preset.fgColor },
+        cornersDotOptions: { type: preset.cornerDotType, color: preset.fgColor },
+        ...(qrLogoUrl ? { image: qrLogoUrl } : {}),
+        qrOptions: { errorCorrectionLevel: qrLogoUrl ? 'H' as const : 'M' as const },
+      });
+    }
   };
 
   const getQrOptions = useCallback(() => {
